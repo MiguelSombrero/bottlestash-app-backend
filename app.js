@@ -4,19 +4,21 @@ const bodyParser = require('body-parser')
 const app = express()
 const cors = require('cors')
 const usersRouter = require('./controllers/users')
+const beersRouter = require('./controllers/beers')
 const middleware = require('./utils/middleware')
 const mongoose = require('mongoose')
+const logger = require('./utils/logger')
 
-console.log('connecting to', config.MONGODB_URI)
+logger.info('connecting to', config.MONGODB_URI)
 
 mongoose.set('useFindAndModify', false)
 
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true })
-  .then(result => {
-    console.log('connected to MongoDb')
+  .then(() => {
+    logger.info('connected to MongoDb')
   })
   .catch((error) => {
-    console.log('error connecting to MongoDb', error.message)
+    logger.error('error connecting to MongoDb', error.message)
   })
 
 app.use(cors())
@@ -25,6 +27,7 @@ app.use(bodyParser.json())
 app.use(middleware.requestLogger)
 
 app.use('/api/users', usersRouter)
+app.use('/api/beers', beersRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)

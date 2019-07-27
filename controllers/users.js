@@ -2,26 +2,22 @@ const bcrypt = require('bcrypt')
 const usersRouter = require('express').Router()
 const User = require('../models/user')
 
+usersRouter.get('/', async (req, res) => {
+  const users = await User.find({}).populate('stash.beer', { ratings: 0 })
+  res.json(users.map(u => u.toJSON()))
+})
+
 usersRouter.post('/', async (req, res, next) => {
   try {
-    const body = req.body
-
-    const saltRounds = 10
-    const passwordHash = await bcrypt.hash(body.password, saltRounds)
+    const { password, username, name, email, hidden, country, city } = req.body
+    const passwordHash = await bcrypt.hash(password, 10)
 
     const user = new User({
-      username: body.username,
-      passwordHash,
-      name: body.name,
-      email: body.email,
-      stash: {
-        private: body.private,
-        beers: []
-      }
+      username, passwordHash, name, email, hidden, country, city, stash: []
     })
 
     const savedUser = await user.save()
-    res.json(savedUser)
+    res.json(savedUser.toJSON())
 
   } catch (exception) {
     next(exception)

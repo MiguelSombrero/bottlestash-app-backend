@@ -13,7 +13,6 @@ const beerSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  bottled: Date,
   ratings: Array
 })
 

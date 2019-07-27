@@ -4,11 +4,11 @@
   "description": "application for managing bottles in beer cellar",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "watch": "nodemon index.js",
+    "start": "cross-env NODE_ENV=production node index.js",
+    "watch": "cross-env NODE_ENV=development nodemon index.js",
     "lint": "eslint .",
     "lint:fix": "node_modules/.bin/eslint . --fix",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand"
   },
   "author": "Miika Somero",
   "license": "ISC",
@@ -21,7 +21,13 @@
     "mongoose-unique-validator": "^2.0.3"
   },
   "devDependencies": {
+    "cross-env": "^5.2.0",
     "eslint": "^6.1.0",
-    "nodemon": "^1.19.1"
+    "jest": "^24.8.0",
+    "nodemon": "^1.19.1",
+    "supertest": "^4.0.2"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }

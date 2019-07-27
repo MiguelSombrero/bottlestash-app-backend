@@ -16,18 +16,23 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: 2
   },
-  email: {
-    type: String
-  },
-  stash: {
-    private: Boolean,
-    beers: [
-      {
+  email: String,
+  hidden: Boolean,
+  country: String,
+  city: String,
+  stash: [
+    {
+      count: Number,
+      volume: Number,
+      bottled: Date,
+      price: Number,
+      expiration: Date,
+      beer: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Beer'
       }
-    ]
-  }
+    }
+  ]
 })
 
 userSchema.plugin(uniqueValidator)
