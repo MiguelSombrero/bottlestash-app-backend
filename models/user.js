@@ -22,15 +22,8 @@ const userSchema = new mongoose.Schema({
   city: String,
   stash: [
     {
-      count: Number,
-      volume: Number,
-      bottled: Date,
-      price: Number,
-      expiration: Date,
-      beer: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Beer'
-      }
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Bottle'
     }
   ]
 })

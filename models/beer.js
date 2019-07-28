@@ -9,19 +9,21 @@ const beerSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  alcohol: {
+  abv: {
     type: Number,
-    required: true
+    required: true,
+    min: 0.0
   },
   ratings: Array
 })
+
+beerSchema.index({ brewery: 1, name: 1, abv: 1 }, { unique: true })
 
 beerSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
     delete returnedObject.__v
-    delete returnedObject.passwordHash
   }
 })
 
