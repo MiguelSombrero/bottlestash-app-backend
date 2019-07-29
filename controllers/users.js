@@ -8,14 +8,21 @@ usersRouter.get('/', async (req, res) => {
 })
 
 usersRouter.post('/', async (req, res, next) => {
-  try {
-    const { password, username, name, email, hidden, country, city } = req.body
-    const passwordHash = await bcrypt.hash(password, 10)
+  const { password, username, name, email, hidden, country, city } = req.body
 
-    const user = new User({
-      username, passwordHash, name, email, hidden, country, city, stash: []
+  if (password.length < 5) {
+    return res.status(401).json({
+      error: 'password too short'
     })
+  }
 
+  const passwordHash = await bcrypt.hash(password, 10)
+
+  const user = new User({
+    username, passwordHash, name, email, hidden, country, city, stash: []
+  })
+
+  try {
     const savedUser = await user.save()
     res.json(savedUser.toJSON())
 

@@ -15,11 +15,17 @@ beersRouter.post('/', async (req, res, next) => {
   })
 
   try {
+    if (!req.token) {
+      return res.status(401).json({
+        error: 'token is missing'
+      })
+    }
+
     const decodedToken = jwt.verify(req.token, process.env.SECRET)
 
-    if (!req.token || !decodedToken.id) {
+    if (!decodedToken.id) {
       return res.status(401).json({
-        error: 'token missing or invalid'
+        error: 'token is invalid'
       })
     }
 

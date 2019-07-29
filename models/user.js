@@ -16,7 +16,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: 2
   },
-  email: String,
+  email: {
+    type:String,
+    unique: true
+  },
   hidden: Boolean,
   country: String,
   city: String,

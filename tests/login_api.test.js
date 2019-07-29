@@ -3,15 +3,16 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const User = require('../models/user')
-const helper = require('./test_helper')
+const bcrypt = require('bcrypt')
 
 beforeEach(async () => {
   await User.deleteMany({})
-  let user = new User(await helper.initialUser())
+  const passwordHash = await bcrypt.hash('salainen', 10)
+  const user = new User({ username: 'Somero', passwordHash, name: 'Miika' })
   await user.save()
 })
 
-describe('when there is user in database', () => {
+describe('login when there is user in database', () => {
   test('login with valid credentials succeeds', async () => {
     const res = await api
       .post('/api/login')

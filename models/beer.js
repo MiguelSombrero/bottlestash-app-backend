@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
 
 const beerSchema = new mongoose.Schema({
   brewery: {
@@ -18,6 +19,7 @@ const beerSchema = new mongoose.Schema({
 })
 
 beerSchema.index({ brewery: 1, name: 1, abv: 1 }, { unique: true })
+beerSchema.plugin(uniqueValidator)
 
 beerSchema.set('toJSON', {
   transform: (document, returnedObject) => {
