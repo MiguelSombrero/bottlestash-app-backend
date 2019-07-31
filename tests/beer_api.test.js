@@ -91,7 +91,7 @@ describe('tests covering POSTing beers in database', () => {
       abv: 5.6
     }
 
-    await api
+    const res = await api
       .post('/api/beers')
       .set('Authorization', 'Bearer ' + login.body.token)
       .send(newBeer)
@@ -99,6 +99,7 @@ describe('tests covering POSTing beers in database', () => {
 
     const beersAtEnd = await helper.beersInDb()
     expect(beersAtEnd.length).toBe(helper.initialBeers.length)
+    expect(res.body.error).toContain('`brewery` is required')
   })
 
   test('beer without name cannot be added', async () => {
@@ -107,7 +108,7 @@ describe('tests covering POSTing beers in database', () => {
       abv: 5.6
     }
 
-    await api
+    const res = await api
       .post('/api/beers')
       .set('Authorization', 'Bearer ' + login.body.token)
       .send(newBeer)
@@ -115,6 +116,7 @@ describe('tests covering POSTing beers in database', () => {
 
     const beersAtEnd = await helper.beersInDb()
     expect(beersAtEnd.length).toBe(helper.initialBeers.length)
+    expect(res.body.error).toContain('`name` is required')
   })
 
   test('beer without abv cannot be added', async () => {
@@ -123,7 +125,7 @@ describe('tests covering POSTing beers in database', () => {
       brewery: 'Sonnisaari'
     }
 
-    await api
+    const res = await api
       .post('/api/beers')
       .set('Authorization', 'Bearer ' + login.body.token)
       .send(newBeer)
@@ -131,6 +133,7 @@ describe('tests covering POSTing beers in database', () => {
 
     const beersAtEnd = await helper.beersInDb()
     expect(beersAtEnd.length).toBe(helper.initialBeers.length)
+    expect(res.body.error).toContain('`abv` is required')
   })
 
   test('beer with negative abv cannot be added', async () => {
@@ -140,7 +143,7 @@ describe('tests covering POSTing beers in database', () => {
       abv: -3.4
     }
 
-    await api
+    const res = await api
       .post('/api/beers')
       .set('Authorization', 'Bearer ' + login.body.token)
       .send(newBeer)
@@ -148,6 +151,7 @@ describe('tests covering POSTing beers in database', () => {
 
     const beersAtEnd = await helper.beersInDb()
     expect(beersAtEnd.length).toBe(helper.initialBeers.length)
+    expect(res.body.error).toContain('`abv` (-3.4) is less than minimum')
   })
 
   test('cannot add beer that is allready in database', async () => {

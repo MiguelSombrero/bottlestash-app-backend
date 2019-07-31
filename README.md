@@ -6,12 +6,12 @@ THIS PROJECT IS IN DEVELOPMENT AND WILL BE UPDATED
 
 ## Main features
 
-- Save beers in your stash to keep track what you have
-- Rate beers from your stash (or beers you don't have)
+- Save beers in your stash to keep track what beers you have
+- Rate beers you drink from your stash (or beers you don't have)
 - Search for stashes to see what beers other users have
 - ...
 
-## Documents
+## Documentation
 
 [User Manual](https://github.com/MiguelSombrero/bottlestash-app-backend/tree/master/docs/user_manual.md)
 
@@ -25,7 +25,11 @@ The latest version of this application is running on Heroku and you can find it 
 
 ## Implementation
 
+### Backend
+
 Server side functionality is implemented with Node.js and Express-library.
+
+### Frontend
 
 Client side is implemented with React ...
 

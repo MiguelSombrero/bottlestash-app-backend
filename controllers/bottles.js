@@ -12,15 +12,26 @@ bottlesRouter.post('/', async (req, res, next) => {
   const { beerId, bottled, price, count, volume, expiration } = req.body
 
   const bottle = new Bottle({
-    bottled, price, count, volume, expiration, beer: beerId
+    price,
+    count,
+    volume,
+    bottled: new Date(bottled).toISOString(),
+    expiration: new Date(expiration).toISOString(),
+    beer: beerId
   })
 
   try {
+    if (!req.token) {
+      return res.status(401).json({
+        error: 'token is missing'
+      })
+    }
+
     const decodedToken = jwt.verify(req.token, process.env.SECRET)
 
-    if (!req.token || !decodedToken.id) {
+    if (!decodedToken.id) {
       return res.status(401).json({
-        error: 'token missing or invalid'
+        error: 'token is invalid'
       })
     }
 
