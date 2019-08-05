@@ -211,7 +211,7 @@ describe('tests covering POSTing bottles in database', () => {
     const newBottle = {
       count: 1,
       volume: 0.75,
-      price: -19.90,
+      price: -19.9,
       bottled: new Date('08.31.2019').toISOString(),
       expiration: new Date('11.02.2026').toISOString(),
       beer: '5d3da464fe4a36ce485c14c8'
@@ -225,7 +225,7 @@ describe('tests covering POSTing bottles in database', () => {
 
     const bottlesAtEnd = await helper.bottlesInDb()
     expect(bottlesAtEnd.length).toBe(helper.initialBottles.length)
-    expect(res.body.error).toContain('`price` (-19.90) is less than minimum')
+    expect(res.body.error).toContain('`price` (-19.9) is less than minimum')
   })
 
   test('cannot add bottle if token is missing', async () => {

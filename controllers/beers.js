@@ -1,5 +1,6 @@
 const beersRouter = require('express').Router()
 const Beer = require('../models/beer')
+const Brewery = require('../models/brewery')
 const jwt = require('jsonwebtoken')
 
 beersRouter.get('/', async (req, res) => {
@@ -8,10 +9,10 @@ beersRouter.get('/', async (req, res) => {
 })
 
 beersRouter.post('/', async (req, res, next) => {
-  const { brewery, name, abv } = req.body
+  const { breweryId, name, abv } = req.body
 
   const beer = new Beer({
-    brewery, name, abv, ratings: []
+    brewery: breweryId, name, abv, ratings: []
   })
 
   try {
@@ -30,6 +31,9 @@ beersRouter.post('/', async (req, res, next) => {
     }
 
     const savedBeer = await beer.save()
+    const brewery = await Brewery.findById(breweryId)
+    brewery.beers = [...brewery.beers, savedBeer]
+    await brewery.save()
     res.json(savedBeer.toJSON())
 
   } catch (exception) {

@@ -1,6 +1,7 @@
 const Beer = require('../models/beer')
 const Bottle = require('../models/bottle')
 const User = require('../models/user')
+const Brewery = require('../models/brewery')
 
 const initialUsers = [
   {
@@ -30,28 +31,47 @@ const newUser = {
   email: 'tytti.com'
 }
 
+const initialBreweries = [
+  {
+    _id: '5d4841d1f580955190e03e36',
+    name: 'Sonnisaari'
+  },
+  {
+    _id: '5d4841d1f580955190e03e33',
+    name: 'Alesmith'
+  },
+  {
+    _id: '5d4841d1f580955190e03e32',
+    name: 'Ballast Point'
+  },
+  {
+    _id: '5d4841d1f580955190e03e31',
+    name: 'Mikkeller'
+  }
+]
+
 const initialBeers = [
   {
     _id: '5d3da427fe4a36ce485c14c3',
-    brewery: 'Alesmith',
+    brewery: '5d4841d1f580955190e03e33',
     name: 'IPA',
     abv: 7.6
   },
   {
     _id: '5d3da448fe4a36ce485c14c4',
-    brewery: 'Alesmith',
+    brewery: '5d4841d1f580955190e03e33',
     name: 'Speedway Stout',
     abv: 12.8
   },
   {
     _id: '5d3da458fe4a36ce485c14c5',
-    brewery: 'Westvleteren',
+    brewery: '5d4841d1f580955190e03e37',
     name: 'XII',
     abv: 12.2
   },
   {
     _id: '5d3da464fe4a36ce485c14c6',
-    brewery: 'Sonnisaari',
+    brewery: '5d4841d1f580955190e03e33',
     name: 'IPA',
     abv: 6.2
   }
@@ -59,7 +79,7 @@ const initialBeers = [
 
 const newBeer = {
   _id: '5d3da464fe4a36ce485c14c7',
-  brewery: 'Olarin Panimo',
+  breweryId: '5d4841d1f580955190e03e33',
   name: 'APA',
   abv: 5.6,
 }
@@ -113,6 +133,11 @@ const beersInDb = async () => {
   return beers.map(beer => beer.toJSON())
 }
 
+const breweriesInDb = async () => {
+  const breweries = await Brewery.find({})
+  return breweries.map(brewery => brewery.toJSON())
+}
+
 const bottlesInDb = async () => {
   const bottles = await Bottle.find({})
   return bottles.map(bottle => bottle.toJSON())
@@ -132,5 +157,7 @@ module.exports = {
   newBottle,
   beersInDb,
   bottlesInDb,
-  usersInDb
+  usersInDb,
+  initialBreweries,
+  breweriesInDb
 }

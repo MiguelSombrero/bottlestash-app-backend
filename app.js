@@ -6,6 +6,7 @@ const cors = require('cors')
 const usersRouter = require('./controllers/users')
 const beersRouter = require('./controllers/beers')
 const bottlesRouter = require('./controllers/bottles')
+const breweriesRouter = require('./controllers/breweries')
 const loginRouter = require('./controllers/login')
 const middleware = require('./utils/middleware')
 const mongoose = require('mongoose')
@@ -14,6 +15,7 @@ const logger = require('./utils/logger')
 logger.info('connecting to', config.MONGODB_URI)
 
 mongoose.set('useFindAndModify', false)
+mongoose.set('useCreateIndex', true)
 
 mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true })
   .then(() => {
@@ -33,6 +35,7 @@ app.use('/api/login', loginRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/beers', beersRouter)
 app.use('/api/bottles', bottlesRouter)
+app.use('/api/breweries', breweriesRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)

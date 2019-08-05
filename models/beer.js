@@ -3,7 +3,8 @@ const uniqueValidator = require('mongoose-unique-validator')
 
 const beerSchema = new mongoose.Schema({
   brewery: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Brewery',
     required: true
   },
   name: {

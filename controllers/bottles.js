@@ -12,12 +12,7 @@ bottlesRouter.post('/', async (req, res, next) => {
   const { beerId, bottled, price, count, volume, expiration } = req.body
 
   const bottle = new Bottle({
-    price,
-    count,
-    volume,
-    bottled: new Date(bottled).toISOString(),
-    expiration: new Date(expiration).toISOString(),
-    beer: beerId
+    price, count, volume, bottled, expiration, beer: beerId
   })
 
   try {

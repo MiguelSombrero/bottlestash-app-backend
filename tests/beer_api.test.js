@@ -4,6 +4,7 @@ const app = require('../app')
 const api = supertest(app)
 const Beer = require('../models/beer')
 const User = require('../models/user')
+const Brewery = require('../models/brewery')
 const helper = require('./test_helper')
 const bcrypt = require('bcrypt')
 
@@ -12,6 +13,7 @@ let login = null
 beforeEach(async () => {
   await Beer.deleteMany({})
   await User.deleteMany({})
+  await Brewery.deleteMany({})
 
   const passwordHash = await bcrypt.hash('salainen', 10)
   const user = new User({ username: 'Somero', passwordHash, name: 'Miika' })
@@ -20,6 +22,12 @@ beforeEach(async () => {
   login = await api
     .post('/api/login')
     .send({ username: 'Somero', password: 'salainen' })
+
+  const breweries = helper.initialBreweries
+    .map(brewery => new Brewery(brewery))
+
+  const breweryPromiseArray = breweries.map(brewery => brewery.save())
+  await Promise.all(breweryPromiseArray)
 
   const beers = helper.initialBeers
     .map(beer => new Beer(beer))
@@ -44,7 +52,7 @@ describe('tests covering GETting beers from database', () => {
   test('a specific beer is in the database', async () => {
     const beersAtStart = await helper.beersInDb()
     const contents = beersAtStart.map(beer => beer.brewery + ' ' + beer.name)
-    expect(contents).toContain('Alesmith IPA')
+    expect(contents).toContain('5d4841d1f580955190e03e33 IPA')
   })
 
   test('id field is defined', async () => {
@@ -70,7 +78,7 @@ describe('tests covering POSTing beers in database', () => {
     expect(beersAtEnd.length).toBe(helper.initialBeers.length + 1)
 
     const contents = beersAtEnd.map(b => b.brewery + ' ' + b.name)
-    expect(contents).toContain('Olarin Panimo APA')
+    expect(contents).toContain('5d4841d1f580955190e03e33 APA')
   })
 
   test('ratings of an added beer is an empty array', async () => {
@@ -104,7 +112,7 @@ describe('tests covering POSTing beers in database', () => {
 
   test('beer without name cannot be added', async () => {
     const newBeer = {
-      brewery: 'Sonnisaari',
+      brewery: '5d4841d1f580955190e03e33',
       abv: 5.6
     }
 
@@ -122,7 +130,7 @@ describe('tests covering POSTing beers in database', () => {
   test('beer without abv cannot be added', async () => {
     const newBeer = {
       name: 'APA',
-      brewery: 'Sonnisaari'
+      brewery: '5d4841d1f580955190e03e33'
     }
 
     const res = await api
@@ -138,7 +146,7 @@ describe('tests covering POSTing beers in database', () => {
 
   test('beer with negative abv cannot be added', async () => {
     const newBeer = {
-      brewery: 'Sonnisaari',
+      brewery: '5d4841d1f580955190e03e33',
       name: 'APA',
       abv: -3.4
     }
@@ -156,7 +164,7 @@ describe('tests covering POSTing beers in database', () => {
 
   test('cannot add beer that is allready in database', async () => {
     const newBeer = {
-      brewery: 'Alesmith',
+      brewery: '5d4841d1f580955190e03e33',
       name: 'IPA',
       abv: 7.6
     }
