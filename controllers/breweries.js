@@ -3,7 +3,7 @@ const Brewery = require('../models/brewery')
 const jwt = require('jsonwebtoken')
 
 breweriesRouter.get('/', async (req, res) => {
-  const breweries = await Brewery.find({}).populate('beers', { ratings: 0 })
+  const breweries = await Brewery.find({}).populate('beers', { ratings: 0, brewery: 0 })
   res.json(breweries.map(brewery => brewery.toJSON()))
 })
 

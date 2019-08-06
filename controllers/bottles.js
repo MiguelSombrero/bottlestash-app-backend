@@ -31,11 +31,11 @@ bottlesRouter.post('/', async (req, res, next) => {
     }
 
     const user = await User.findById(decodedToken.id)
+    bottle.user = user._id
     const savedBottle = await bottle.save()
-
     user.stash = [...user.stash, savedBottle ]
-
     await user.save()
+
     res.json(savedBottle.toJSON())
 
   } catch (exception) {

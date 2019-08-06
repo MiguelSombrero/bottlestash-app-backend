@@ -1,6 +1,7 @@
 Day | Hours | Legend
 ----|-------|-------
-All | 44 |
+All | 48 |
+06.8 | 4 | Backend new router Breweries, Frontend Stash
 05.8 | 6 | New view Stash, backend new model Brewery
 02.8 | 4 | First tests in frontend
 01.8 | 6 | Redux and react router to frontend
