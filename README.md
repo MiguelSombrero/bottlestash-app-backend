@@ -1,13 +1,13 @@
 # Bottlestash App (backend)
 
-This is a project work for the Helsinki University course [Full Stack Open 2019](https://fullstackopen.com/). Bottlestash is an application that lets you manage your beer cellar, rate beers and more.
+This is a project work for the Helsinki University course [Full Stack Open 2019](https://fullstackopen.com/). Bottlestash is an application that lets you manage your beer cellar, rate beers and more. Notice that this repository is for the apps backend only. You can find frontend repository from [HERE](https://github.com/MiguelSombrero/bottlestash-app-frontend)
 
 THIS PROJECT IS IN DEVELOPMENT AND WILL BE UPDATED
 
 ## Main features
 
 - Save beers in your stash to keep track what beers you have
-- Rate beers you drink from your stash (or beers you don't have)
+- Rate beers you drink
 - Search for stashes to see what beers other users have
 - ...
 

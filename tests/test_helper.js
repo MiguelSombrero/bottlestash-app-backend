@@ -5,18 +5,21 @@ const Brewery = require('../models/brewery')
 
 const initialUsers = [
   {
+    _id: '5d4bc0527958a42219ca2034',
     username: 'Somero',
     passwordHash: 'salainen',
     name: 'Miika',
     email: 'miika.fi'
   },
   {
+    _id: '5d4bc0527958a42219ca2033',
     username: 'Luukkainen',
     passwordHash: 'salaisempi',
     name: 'Masa',
     email: 'masa.fi'
   },
   {
+    _id: '5d4bc0527958a42219ca2032',
     username: 'Rölli',
     passwordHash: 'peikko',
     name: 'Peikko',
@@ -25,6 +28,7 @@ const initialUsers = [
 ]
 
 const newUser = {
+  _id: '5d4bc0527958a42219ca2035',
   username: 'Uusihenkilo',
   password: 'salasana',
   name: 'Tytti',
@@ -91,7 +95,8 @@ const initialBottles = [
     price: 4.90,
     bottled: new Date('03.05.2019').toISOString(),
     expiration: new Date('01.01.2020').toISOString(),
-    beer: '5d3da427fe4a36ce485c14c3'
+    beer: '5d3da427fe4a36ce485c14c3',
+    user: '5d4bc0527958a42219ca2034'
   },
   {
     count: 1,
@@ -99,7 +104,8 @@ const initialBottles = [
     price: 5.89,
     bottled: new Date('03.12.2017').toISOString(),
     expiration: new Date('01.11.2022').toISOString(),
-    beer: '5d3da448fe4a36ce485c14c4'
+    beer: '5d3da448fe4a36ce485c14c4',
+    user: '5d4bc0527958a42219ca2034'
   },
   {
     count: 6,
@@ -107,7 +113,8 @@ const initialBottles = [
     price: 9.90,
     bottled: new Date('05.31.2019').toISOString(),
     expiration: new Date('11.01.2023').toISOString(),
-    beer: '5d3da458fe4a36ce485c14c5'
+    beer: '5d3da458fe4a36ce485c14c5',
+    user: '5d4bc0527958a42219ca2034'
   },
   {
     count: 1,
@@ -115,7 +122,8 @@ const initialBottles = [
     price: 7.90,
     bottled: new Date('07.30.2019').toISOString(),
     expiration: new Date('01.21.2021').toISOString(),
-    beer: '5d3da464fe4a36ce485c14c6'
+    beer: '5d3da464fe4a36ce485c14c6',
+    user: '5d4bc0527958a42219ca2033'
   }
 ]
 
@@ -125,7 +133,8 @@ const newBottle = {
   price: 19.90,
   bottled: new Date('08.29.2019').toISOString(),
   expiration: new Date('11.02.2026').toISOString(),
-  beerId: '5d3da464fe4a36ce485c14c6'
+  beerId: '5d3da464fe4a36ce485c14c6',
+  user: '5d4bc0527958a42219ca2034'
 }
 
 const beersInDb = async () => {

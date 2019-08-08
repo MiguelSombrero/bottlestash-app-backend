@@ -7,6 +7,20 @@ breweriesRouter.get('/', async (req, res) => {
   res.json(breweries.map(brewery => brewery.toJSON()))
 })
 
+breweriesRouter.get('/:name', async (req, res, next) => {
+  try {
+    const brewery = await Brewery.findOne({ name: req.params.name })
+      .populate('beers', { ratings: 0, brewery: 0 })
+
+    brewery === null
+      ? res.status(204).end()
+      : res.json(brewery.toJSON())
+
+  } catch (exception) {
+    next(exception)
+  }
+})
+
 breweriesRouter.post('/', async (req, res, next) => {
   const { name } = req.body
 

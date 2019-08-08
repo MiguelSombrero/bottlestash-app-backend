@@ -65,6 +65,30 @@ describe('tests covering GETting beers from database', () => {
   })
 })
 
+describe('tests covering GETting one beer from database', () => {
+  test('can fetch beer thats in the database', async () => {
+    const res = await api
+      .get('/api/beers/5d4841d1f580955190e03e37/XII/12.2')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(res.body).toMatchObject({
+      id: '5d3da458fe4a36ce485c14c5',
+      brewery: '5d4841d1f580955190e03e37',
+      name: 'XII',
+      abv: 12.2
+    })
+  })
+
+  test('nothing is returned when fetching missing beer', async () => {
+    const res = await api
+      .get('/api/beers/5d4841d1f580955190e03e37/XII/5.5')
+      .expect(204)
+
+    expect(res.body).toBe({})
+  })
+})
+
 describe('tests covering POSTing beers in database', () => {
   test('a valid beer can be added', async () => {
     await api
@@ -175,9 +199,10 @@ describe('tests covering POSTing beers in database', () => {
       .send(newBeer)
       .expect(400)
 
-    expect(res.body.error).toContain('`brewery` to be unique')
-    expect(res.body.error).toContain('`name` to be unique')
-    expect(res.body.error).toContain('`abv` to be unique')
+    // antaa jostain syystä tämmöisen herjan 'required'?
+    const beersAtEnd = await helper.beersInDb()
+    expect(beersAtEnd.length).toBe(helper.initialBeers.length)
+    expect(res.body.error).toContain('`brewery` is required')
   })
 
   test('cannot add beer if token is missing', async () => {

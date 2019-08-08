@@ -57,6 +57,40 @@ describe('tests covering GETting breweries from database', () => {
   })
 })
 
+describe('tests covering GETting one brewery from database', () => {
+  test('can fetch brewery thats in the database', async () => {
+    const res = await api
+      .get('/api/breweries/Sonnisaari')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(res.body).toMatchObject({
+      id: '5d4841d1f580955190e03e36',
+      name: 'Sonnisaari'
+    })
+  })
+
+  test('can fetch two part named brewery thats in the database', async () => {
+    const res = await api
+      .get('/api/breweries/Ballast Point')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(res.body).toMatchObject({
+      id: '5d4841d1f580955190e03e32',
+      name: 'Ballast Point'
+    })
+  })
+
+  test('nothing is returned when fetching missing brewery', async () => {
+    const res = await api
+      .get('/api/breweries/Nogne')
+      .expect(204)
+
+    expect(res.body).toStrictEqual({})
+  })
+})
+
 describe('tests covering POSTing breweries in database', () => {
   test('a valid brewery can be added', async () => {
     const newBrewery = {

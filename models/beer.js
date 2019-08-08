@@ -20,7 +20,7 @@ const beerSchema = new mongoose.Schema({
 })
 
 beerSchema.index({ brewery: 1, name: 1, abv: 1 }, { unique: true })
-beerSchema.plugin(uniqueValidator)
+beerSchema.plugin(uniqueValidator, { message: 'expected {PATH} to be unique' })
 
 beerSchema.set('toJSON', {
   transform: (document, returnedObject) => {

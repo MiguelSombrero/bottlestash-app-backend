@@ -83,7 +83,7 @@ describe('tests covering POSTing bottles in database', () => {
     expect(contents).toContain('5d3da464fe4a36ce485c14c6')
   })
 
-  test('a valid bottle with minimun fields can be added', async () => {
+  test('a valid bottle with minimum fields can be added', async () => {
     const newBottle = {
       count: 1,
       volume: 0.75,

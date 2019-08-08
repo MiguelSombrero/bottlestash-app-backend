@@ -3,9 +3,9 @@ const usersRouter = require('express').Router()
 const User = require('../models/user')
 
 usersRouter.get('/', async (req, res) => {
-  const users = await User.find({}).populate({ path: 'stash',
-    populate: { path: 'beer',
-      populate: { path: 'brewery' } }
+  const users = await User.find({}).populate({ path: 'stash', select: 'price count volume bottled expiration beer',
+    populate: { path: 'beer', select: 'brewery name abv',
+      populate: { path: 'brewery', select: 'name' } }
   })
 
   res.json(users.map(u => u.toJSON()))

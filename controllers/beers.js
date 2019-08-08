@@ -8,6 +8,19 @@ beersRouter.get('/', async (req, res) => {
   res.json(beers.map(beer => beer.toJSON()))
 })
 
+beersRouter.get('/:breweryId/:name/:abv', async (req, res, next) => {
+  try {
+    const beer = await Beer.findOne({ brewery: req.params.breweryId, name: req.params.name, abv: req.params.abv })
+
+    beer === null
+      ? res.status(204).end()
+      : res.json(beer.toJSON())
+
+  } catch (exception) {
+    next(exception)
+  }
+})
+
 beersRouter.post('/', async (req, res, next) => {
   const { breweryId, name, abv } = req.body
 
