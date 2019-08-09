@@ -28,6 +28,12 @@ const userSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Bottle'
     }
+  ],
+  ratings: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Rating'
+    }
   ]
 })
 

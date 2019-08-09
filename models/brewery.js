@@ -1,6 +1,6 @@
 /**
  * mongoose schema for Brewery. For the sake of simplicity containing only two attributes, name and beers.
- * schema can be extended for additional useful info, if needed
+ * schema can be extended for additional useful brewery info, if needed
  */
 
 const mongoose = require('mongoose')

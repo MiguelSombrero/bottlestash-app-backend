@@ -85,7 +85,7 @@ describe('tests covering GETting one beer from database', () => {
       .get('/api/beers/5d4841d1f580955190e03e37/XII/5.5')
       .expect(204)
 
-    expect(res.body).toBe({})
+    expect(res.body).toStrictEqual({})
   })
 })
 

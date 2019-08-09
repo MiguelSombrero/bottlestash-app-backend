@@ -16,7 +16,12 @@ const beerSchema = new mongoose.Schema({
     required: true,
     min: 0.0
   },
-  ratings: Array
+  ratings: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Rating'
+    }
+  ]
 })
 
 beerSchema.index({ brewery: 1, name: 1, abv: 1 }, { unique: true })

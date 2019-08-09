@@ -1,7 +1,7 @@
 const beersRouter = require('express').Router()
 const Beer = require('../models/beer')
 const Brewery = require('../models/brewery')
-const jwt = require('jsonwebtoken')
+const middleware = require('../utils/middleware')
 
 beersRouter.get('/', async (req, res) => {
   const beers = await Beer.find({})
@@ -21,7 +21,7 @@ beersRouter.get('/:breweryId/:name/:abv', async (req, res, next) => {
   }
 })
 
-beersRouter.post('/', async (req, res, next) => {
+beersRouter.post('/', middleware.validateToken, async (req, res, next) => {
   const { breweryId, name, abv } = req.body
 
   const beer = new Beer({
@@ -29,20 +29,6 @@ beersRouter.post('/', async (req, res, next) => {
   })
 
   try {
-    if (!req.token) {
-      return res.status(401).json({
-        error: 'token is missing'
-      })
-    }
-
-    const decodedToken = jwt.verify(req.token, process.env.SECRET)
-
-    if (!decodedToken.id) {
-      return res.status(401).json({
-        error: 'token is invalid'
-      })
-    }
-
     const savedBeer = await beer.save()
     const brewery = await Brewery.findById(breweryId)
     brewery.beers = [...brewery.beers, savedBeer]

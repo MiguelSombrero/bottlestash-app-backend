@@ -50,7 +50,7 @@ describe('tests covering GETting bottles from database', () => {
   })
 
   test('a specific bottle is in the database', async () => {
-    // kokeile tehdä tähän koko objektin vertailu 
+    // kokeile tehdä tähän koko objektin vertailu
     const bottlesAtStart = await helper.bottlesInDb()
     const contents = bottlesAtStart.map(bottle => bottle.beer.toString())
     expect(contents).toContain('5d3da458fe4a36ce485c14c5')
