@@ -11,6 +11,22 @@ usersRouter.get('/', async (req, res) => {
   res.json(users.map(u => u.toJSON()))
 })
 
+usersRouter.get('/:username', async (req, res, next) => {
+  try {
+    const user = await User.findOne({ username: req.params.username }).populate({ path: 'stash', select: 'price count volume bottled expiration beer',
+      populate: { path: 'beer', select: 'brewery name abv',
+        populate: { path: 'brewery', select: 'name' } }
+    })
+
+    user === null
+      ? res.status(204).end()
+      : res.json(user.toJSON())
+
+  } catch (exception) {
+    next(exception)
+  }
+})
+
 usersRouter.post('/', async (req, res, next) => {
   const { password, username, name, email, hidden, country, city } = req.body
 

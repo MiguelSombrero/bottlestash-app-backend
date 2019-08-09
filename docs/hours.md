@@ -1,7 +1,7 @@
 Day | Hours | Legend
 ----|-------|-------
-All | 65 |
-09.8 | 4 | new view Bottle and schema Rating, refactoring
+All | 67 |
+09.8 | 6 | new view Bottle and schema Rating, refactoring
 08.8 | 5 | updating backend tests, addBeer functionality
 07.8 | 6 | Routers and services for beers, breweries and bottles
 06.8 | 6 | Backend new router Breweries, Frontend Stash

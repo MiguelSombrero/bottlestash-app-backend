@@ -91,7 +91,7 @@ describe('tests covering GETting one beer from database', () => {
 
 describe('tests covering POSTing beers in database', () => {
   test('a valid beer can be added', async () => {
-    await api
+    const res = await api
       .post('/api/beers')
       .set('Authorization', 'Bearer ' + login.body.token)
       .send(helper.newBeer)
@@ -102,7 +102,14 @@ describe('tests covering POSTing beers in database', () => {
     expect(beersAtEnd.length).toBe(helper.initialBeers.length + 1)
 
     const contents = beersAtEnd.map(b => b.brewery + ' ' + b.name)
-    expect(contents).toContain('5d4841d1f580955190e03e33 APA')
+    expect(contents).toContainEqual('5d4841d1f580955190e03e33 APA')
+
+    /**
+    const breweries = await helper.breweriesInDb()
+    const brewery = breweries.find(brewery => brewery.id === '5d4841d1f580955190e03e33')
+    expect(brewery.beers.length).toBe(1)
+    expect(brewery.beers).toContain([res.body.id.toString()])
+     */
   })
 
   test('ratings of an added beer is an empty array', async () => {

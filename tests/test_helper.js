@@ -2,6 +2,7 @@ const Beer = require('../models/beer')
 const Bottle = require('../models/bottle')
 const User = require('../models/user')
 const Brewery = require('../models/brewery')
+const Rating = require('../models/rating')
 
 const initialUsers = [
   {
@@ -137,6 +138,25 @@ const newBottle = {
   user: '5d4bc0527958a42219ca2034'
 }
 
+const initialRatings = [
+  {
+    aroma: 6,
+    taste: 8,
+    mouthfeel: 4,
+    appearance: 4,
+    overall: 17,
+    rated: new Date('08.29.2019').toISOString(),
+    ageofbeer: 23,
+    description: 'wery delicate taste, with hints of chocolate. Liked!',
+    user: '5d4bc0527958a42219ca2034',
+    beer: '5d3da458fe4a36ce485c14c5'
+  }
+]
+
+const ratingsInDb = async () => {
+  const ratings = await Rating.find({})
+  return ratings.map(rating => rating.toJSON())
+}
 const beersInDb = async () => {
   const beers = await Beer.find({})
   return beers.map(beer => beer.toJSON())
@@ -168,5 +188,6 @@ module.exports = {
   bottlesInDb,
   usersInDb,
   initialBreweries,
-  breweriesInDb
+  breweriesInDb,
+  ratingsInDb
 }

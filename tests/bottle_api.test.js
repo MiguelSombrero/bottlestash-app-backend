@@ -78,9 +78,16 @@ describe('tests covering POSTing bottles in database', () => {
     const bottlesAtEnd = await helper.bottlesInDb()
     expect(bottlesAtEnd.length).toBe(helper.initialBottles.length + 1)
 
-    // kokeile tehdä tähän koko objektin vertailu
     const contents = bottlesAtEnd.map(bottle => bottle.beer.toString())
     expect(contents).toContain('5d3da464fe4a36ce485c14c6')
+
+    const users = await helper.usersInDb()
+    const user = users.find(user => user.username === 'Somero')
+    expect(user.stash.length).toBe(1)
+
+    /**
+    expect(user.stash[0]).toStrictEqual(res.body.id)
+     */
   })
 
   test('a valid bottle with minimum fields can be added', async () => {
@@ -100,7 +107,6 @@ describe('tests covering POSTing bottles in database', () => {
     const bottlesAtEnd = await helper.bottlesInDb()
     expect(bottlesAtEnd.length).toBe(helper.initialBottles.length + 1)
 
-    // kokeile tehdä tähän koko objektin vertailu
     const contents = bottlesAtEnd.map(bottle => bottle.beer.toString())
     expect(contents).toContain('5d3da464fe4a36ce485c14c8')
   })
