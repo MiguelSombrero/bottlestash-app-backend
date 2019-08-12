@@ -148,10 +148,45 @@ const initialRatings = [
     rated: new Date('08.29.2019').toISOString(),
     ageofbeer: 23,
     description: 'wery delicate taste, with hints of chocolate. Liked!',
-    user: '5d4bc0527958a42219ca2034',
-    beer: '5d3da458fe4a36ce485c14c5'
+    beer: '5d3da458fe4a36ce485c14c5',
+    user: '5d4bc0527958a42219ca2034'
+  },
+  {
+    aroma: 5,
+    taste: 7,
+    mouthfeel: 4,
+    appearance: 3,
+    overall: 14,
+    rated: new Date('02.01.2019').toISOString(),
+    ageofbeer: 6,
+    description: 'A bit alcoholy aftertaste. Light yellow body. Not too good.',
+    beer: '5d3da448fe4a36ce485c14c4',
+    user: '5d4bc0527958a42219ca2034'
+  },
+  {
+    aroma: 8,
+    taste: 8,
+    mouthfeel: 5,
+    appearance: 4,
+    overall: 18,
+    rated: new Date('12.12.2018').toISOString(),
+    ageofbeer: 34,
+    description: 'Best Imperial Stout I have ever tasted!',
+    beer: '5d3da448fe4a36ce485c14c4',
+    user: '5d4bc0527958a42219ca2034'
   }
 ]
+
+const newRating = {
+  aroma: 9,
+  taste: 9,
+  mouthfeel: 5,
+  appearance: 3,
+  overall: 19,
+  ageofbeer: 35,
+  description: 'Very blanced and soft. Coffee and salty liqourice.',
+  beerId: '5d3da448fe4a36ce485c14c4'
+}
 
 const ratingsInDb = async () => {
   const ratings = await Rating.find({})
@@ -177,6 +212,10 @@ const usersInDb = async () => {
   return users.map(user => user.toJSON())
 }
 
+const stringOfLength = (length) => {
+  return 'a'.repeat(length)
+}
+
 module.exports = {
   initialUsers,
   newUser,
@@ -189,5 +228,8 @@ module.exports = {
   usersInDb,
   initialBreweries,
   breweriesInDb,
-  ratingsInDb
+  ratingsInDb,
+  initialRatings,
+  newRating,
+  stringOfLength
 }

@@ -1,6 +1,8 @@
 Day | Hours | Legend
 ----|-------|-------
-All | 67 |
+All | 73 |
+12.8 | 3 | backend tests
+11.8 | 3 | new views Rate, Notification and refactoring
 09.8 | 6 | new view Bottle and schema Rating, refactoring
 08.8 | 5 | updating backend tests, addBeer functionality
 07.8 | 6 | Routers and services for beers, breweries and bottles

@@ -91,7 +91,7 @@ describe('tests covering GETting one beer from database', () => {
 
 describe('tests covering POSTing beers in database', () => {
   test('a valid beer can be added', async () => {
-    const res = await api
+    await api
       .post('/api/beers')
       .set('Authorization', 'Bearer ' + login.body.token)
       .send(helper.newBeer)
@@ -100,16 +100,23 @@ describe('tests covering POSTing beers in database', () => {
 
     const beersAtEnd = await helper.beersInDb()
     expect(beersAtEnd.length).toBe(helper.initialBeers.length + 1)
-
     const contents = beersAtEnd.map(b => b.brewery + ' ' + b.name)
     expect(contents).toContainEqual('5d4841d1f580955190e03e33 APA')
+  })
 
-    /**
+  test('a valid beer is also saved in brewery', async () => {
+    const res = await api
+      .post('/api/bottles')
+      .set('Authorization', 'Bearer ' + login.body.token)
+      .send(helper.newBottle)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
     const breweries = await helper.breweriesInDb()
-    const brewery = breweries.find(brewery => brewery.id === '5d4841d1f580955190e03e33')
+    const brewery = breweries.find(brewery => brewery.id === res.body.brewery)
+
     expect(brewery.beers.length).toBe(1)
-    expect(brewery.beers).toContain([res.body.id.toString()])
-     */
+    expect(brewery.beers[0].toString()).toBe(res.body.id.toString())
   })
 
   test('ratings of an added beer is an empty array', async () => {

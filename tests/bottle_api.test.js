@@ -77,17 +77,21 @@ describe('tests covering POSTing bottles in database', () => {
 
     const bottlesAtEnd = await helper.bottlesInDb()
     expect(bottlesAtEnd.length).toBe(helper.initialBottles.length + 1)
-
     const contents = bottlesAtEnd.map(bottle => bottle.beer.toString())
     expect(contents).toContain('5d3da464fe4a36ce485c14c6')
+  })
+
+  test('a valid bottle is also saved in user', async () => {
+    const res = await api
+      .post('/api/bottles')
+      .set('Authorization', 'Bearer ' + login.body.token)
+      .send(helper.newBottle)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
 
     const users = await helper.usersInDb()
-    const user = users.find(user => user.username === 'Somero')
-    expect(user.stash.length).toBe(1)
-
-    /**
-    expect(user.stash[0]).toStrictEqual(res.body.id)
-     */
+    expect(users[0].stash.length).toBe(1)
+    expect(users[0].stash[0].toString()).toBe(res.body.id.toString())
   })
 
   test('a valid bottle with minimum fields can be added', async () => {
@@ -106,7 +110,6 @@ describe('tests covering POSTing bottles in database', () => {
 
     const bottlesAtEnd = await helper.bottlesInDb()
     expect(bottlesAtEnd.length).toBe(helper.initialBottles.length + 1)
-
     const contents = bottlesAtEnd.map(bottle => bottle.beer.toString())
     expect(contents).toContain('5d3da464fe4a36ce485c14c8')
   })

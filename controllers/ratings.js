@@ -11,10 +11,10 @@ ratingsRouter.get('/', async (req, res) => {
 })
 
 ratingsRouter.post('/', middleware.validateToken, async (req, res, next) => {
-  const { beerId, aroma, taste, mouthfeel, appearance, overall, description, rated, ageofbeer } = req.body
+  const { beerId, aroma, taste, mouthfeel, appearance, overall, description, ageofbeer } = req.body
 
   const rating = new Rating({
-    aroma, taste, mouthfeel, appearance, overall, description, rated, ageofbeer, beer: beerId
+    aroma, taste, mouthfeel, appearance, overall, description, rated: new Date(), ageofbeer, beer: beerId
   })
 
   try {
@@ -27,6 +27,7 @@ ratingsRouter.post('/', middleware.validateToken, async (req, res, next) => {
     user.ratings = [...user.ratings, savedRating ]
     beer.ratings = [...beer.ratings, savedRating ]
     await user.save()
+    await beer.save()
 
     res.json(savedRating.toJSON())
 
