@@ -1,7 +1,8 @@
 Day | Hours | Legend
 ----|-------|-------
-All | 77 |
-13.8 | 4 | refactoring frontend functionality to custom hooks
+All | 85 |
+14.8 | 6 | router to remove and update rating, frontend add rating
+13.8 | 6 | refactoring frontend functionality to custom hooks
 12.8 | 3 | backend tests
 11.8 | 3 | new views Rate, Notification and refactoring
 09.8 | 6 | new view Bottle and schema Rating, refactoring

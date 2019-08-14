@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const User = require('./user')
 
 const bottleSchema = new mongoose.Schema({
   count: {
@@ -27,6 +28,14 @@ const bottleSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   }
+})
+
+bottleSchema.post('findOneAndRemove', async (bottle) => {
+  await User.updateOne(
+    {},
+    { $pull: { stash: bottle._id } },
+    { multi: true }
+  )
 })
 
 bottleSchema.set('toJSON', {

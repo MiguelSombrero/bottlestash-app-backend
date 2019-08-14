@@ -21,7 +21,7 @@ THIS PROJECT IS IN DEVELOPMENT AND WILL BE UPDATED
 
 The latest version of this application is running on Heroku and you can find it here:
 
-    NOT YET ON HEROKU
+    [Bottlestash - Heroku](https://tranquil-inlet-27418.herokuapp.com/)
 
 ## Implementation
 
