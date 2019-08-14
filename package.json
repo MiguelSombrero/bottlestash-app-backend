@@ -8,7 +8,9 @@
     "watch": "cross-env NODE_ENV=development nodemon index.js",
     "lint": "eslint .",
     "lint:fix": "node_modules/.bin/eslint . --fix",
-    "test": "cross-env NODE_ENV=test jest --verbose --runInBand"
+    "test": "cross-env NODE_ENV=test jest --verbose --runInBand",
+    "build:ui": "rm -rf build && cd ../bottlestash-frontend/ && npm run build --prod && cp -r build ../bottlestash-backend/",
+    "deploy": "git push heroku master"
   },
   "author": "Miika Somero",
   "license": "ISC",

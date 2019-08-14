@@ -1,6 +1,7 @@
 Day | Hours | Legend
 ----|-------|-------
-All | 73 |
+All | 77 |
+13.8 | 4 | refactoring frontend functionality to custom hooks
 12.8 | 3 | backend tests
 11.8 | 3 | new views Rate, Notification and refactoring
 09.8 | 6 | new view Bottle and schema Rating, refactoring
