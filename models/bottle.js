@@ -30,7 +30,7 @@ const bottleSchema = new mongoose.Schema({
   }
 })
 
-bottleSchema.post('findOneAndRemove', async (bottle) => {
+bottleSchema.post('remove', async (bottle) => {
   await User.updateOne(
     {},
     { $pull: { stash: bottle._id } },

@@ -16,8 +16,12 @@ beforeEach(async () => {
   await Bottle.deleteMany({})
 
   const passwordHash = await bcrypt.hash('salainen', 10)
-  const user = new User({ username: 'Somero', passwordHash, name: 'Miika' })
+  const user = new User({ username: 'Somero', passwordHash, name: 'Miika', email: 'miika.fi' })
   await user.save()
+
+  const passwordHash2 = await bcrypt.hash('salaisempi', 10)
+  const user2 = new User({ username: 'Luukkainen', passwordHash: passwordHash2, name: 'Masa', email: 'masa.fi' })
+  await user2.save()
 
   login = await api
     .post('/api/login')
@@ -30,7 +34,7 @@ beforeEach(async () => {
   await Promise.all(promiseArrayBeer)
 
   const bottles = helper.initialBottles
-    .map(bottle => new Bottle(bottle))
+    .map(bottle => new Bottle({ ...bottle, user: user._id }))
 
   const promiseArrayBottle = bottles.map(bottle => bottle.save())
   await Promise.all(promiseArrayBottle)
@@ -252,6 +256,147 @@ describe('tests covering POSTing bottles in database', () => {
     // tätä en ole saanut toistaiseksi toimimaan
     // tulee status 500 eikä 401
 
+  })
+})
+
+describe('test covering DELETEing bottles', () => {
+  test('delete existing bottle works', async () => {
+    const bottlesAtStart = await helper.bottlesInDb()
+    const bottleToDelete = bottlesAtStart[0]
+
+    await api
+      .delete(`/api/bottles/${bottleToDelete.id}`)
+      .set('Authorization', 'Bearer ' + login.body.token)
+      .expect(204)
+
+    const bottlesAtEnd = await helper.bottlesInDb()
+
+    expect(bottlesAtEnd.length).toBe(bottlesAtStart.length - 1)
+    expect(bottlesAtEnd.map(bottle => bottle.id)).not.toContain(bottleToDelete.id)
+  })
+
+  test('deleting bottle removes it from users', async () => {
+
+    // TESTIEN ALUSTUSTA PITÄÄ MUUTTAA NIIN, ETTÄ KÄYTTÄJÄLLE TULEE PULLON ID
+
+    /**
+    const bottlesAtStart = await helper.bottlesInDb()
+    const bottleToDelete = bottlesAtStart[0]
+
+    await api
+      .delete(`/api/bottles/${bottleToDelete.id}`)
+      .set('Authorization', 'Bearer ' + login.body.token)
+      .expect(204)
+
+    const users = await helper.usersInDb()
+    const user = users[0]
+    expect(user.stash.map(bottle => bottle).not.toContain(bottleToDelete.id))
+     */
+  })
+
+  test('cannot delete someone elses bottle', async () => {
+    const bottlesAtStart = await helper.bottlesInDb()
+    const bottleToDelete = bottlesAtStart[0]
+
+    const loginMasa = await api
+      .post('/api/login')
+      .send({ username: 'Luukkainen', password: 'salaisempi' })
+
+    const res = await api
+      .delete(`/api/bottles/${bottleToDelete.id}`)
+      .set('Authorization', 'Bearer ' + loginMasa.body.token)
+      .expect(401)
+
+    const bottlesAtEnd = await helper.bottlesInDb()
+    expect(bottlesAtEnd.length).toBe(bottlesAtStart.length)
+    expect(bottlesAtEnd.map(bottle => bottle.id)).toContain(bottleToDelete.id)
+    expect(res.body.error).toBe('no authorization to delete bottle')
+  })
+
+  test('delete unexisting bottle returns bad request', async () => {
+    const bottlesAtStart = await helper.bottlesInDb()
+
+    const res = await api
+      .delete('/api/bottles/5d3da464fe4a36ce485c14c6')
+      .set('Authorization', 'Bearer ' + login.body.token)
+      .expect(404)
+
+    const bottlesAtEnd = await helper.bottlesInDb()
+    expect(bottlesAtEnd.length).toBe(bottlesAtStart.length)
+    expect(res.body.error).toBe('no such bottle')
+  })
+
+  test('delete bottle without token not possible', async () => {
+    const bottlesAtStart = await helper.bottlesInDb()
+    const bottleToDelete = bottlesAtStart[0]
+
+    const res = await api
+      .delete(`/api/bottles/${bottleToDelete.id}`)
+      .expect(401)
+
+    const bottlesAtEnd = await helper.bottlesInDb()
+    expect(bottlesAtEnd.length).toBe(bottlesAtStart.length)
+    expect(res.body.error).toBe('token is missing')
+  })
+})
+
+describe('tests covering PUTing existing bottles in database', () => {
+  test('updating existing bottle works', async () => {
+    const bottlesAtStart = await helper.bottlesInDb()
+    const bottleToUpdate = bottlesAtStart[0]
+
+    const newBottle = {
+      ... bottleToUpdate, count: bottleToUpdate.count + 1
+    }
+
+    await api
+      .put(`/api/bottles/${bottleToUpdate.id}`)
+      .send(newBottle)
+      .set('Authorization', 'Bearer ' + login.body.token)
+      .expect(201)
+
+    const bottlesAtEnd = await helper.bottlesInDb()
+    const updatedBottle = bottlesAtEnd.find(bottle => bottle.id === bottleToUpdate.id)
+
+    expect(bottlesAtEnd.length).toBe(bottlesAtStart.length)
+    expect(bottleToUpdate.count).toBe(updatedBottle.count - 1)
+  })
+
+  test('cannot update someone elses bottle', async () => {
+    const bottlesAtStart = await helper.bottlesInDb()
+    const bottleToUpdate = bottlesAtStart[0]
+
+    const newBottle = {
+      ... bottleToUpdate, count: bottleToUpdate.count + 1
+    }
+
+    const loginMasa = await api
+      .post('/api/login')
+      .send({ username: 'Luukkainen', password: 'salaisempi' })
+
+    const res = await api
+      .put(`/api/bottles/${bottleToUpdate.id}`)
+      .send(newBottle)
+      .set('Authorization', 'Bearer ' + loginMasa.body.token)
+      .expect(401)
+
+    const bottlesAtEnd = await helper.bottlesInDb()
+    const updatedBottle = bottlesAtEnd.find(bottle => bottle.id === bottleToUpdate.id)
+    expect(bottleToUpdate.count).toBe(updatedBottle.count)
+    expect(res.body.error).toBe('no authorization to update bottle')
+  })
+
+  test('update bottle without token not possible', async () => {
+    const bottlesAtStart = await helper.bottlesInDb()
+    const bottleToUpdate = bottlesAtStart[0]
+
+    const res = await api
+      .put(`/api/bottles/${bottleToUpdate.id}`)
+      .expect(401)
+
+    const bottlesAtEnd = await helper.bottlesInDb()
+    expect(bottlesAtEnd.length).toBe(bottlesAtStart.length)
+    expect(res.body.error).toBe('token is missing')
   })
 })
 

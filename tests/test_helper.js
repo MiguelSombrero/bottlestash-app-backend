@@ -96,8 +96,7 @@ const initialBottles = [
     price: 4.90,
     bottled: new Date('03.05.2019').toISOString(),
     expiration: new Date('01.01.2020').toISOString(),
-    beer: '5d3da427fe4a36ce485c14c3',
-    user: '5d4bc0527958a42219ca2034'
+    beer: '5d3da427fe4a36ce485c14c3'
   },
   {
     count: 1,
@@ -105,8 +104,7 @@ const initialBottles = [
     price: 5.89,
     bottled: new Date('03.12.2017').toISOString(),
     expiration: new Date('01.11.2022').toISOString(),
-    beer: '5d3da448fe4a36ce485c14c4',
-    user: '5d4bc0527958a42219ca2034'
+    beer: '5d3da448fe4a36ce485c14c4'
   },
   {
     count: 6,
@@ -114,8 +112,7 @@ const initialBottles = [
     price: 9.90,
     bottled: new Date('05.31.2019').toISOString(),
     expiration: new Date('11.01.2023').toISOString(),
-    beer: '5d3da458fe4a36ce485c14c5',
-    user: '5d4bc0527958a42219ca2034'
+    beer: '5d3da458fe4a36ce485c14c5'
   },
   {
     count: 1,
@@ -123,8 +120,7 @@ const initialBottles = [
     price: 7.90,
     bottled: new Date('07.30.2019').toISOString(),
     expiration: new Date('01.21.2021').toISOString(),
-    beer: '5d3da464fe4a36ce485c14c6',
-    user: '5d4bc0527958a42219ca2033'
+    beer: '5d3da464fe4a36ce485c14c6'
   }
 ]
 

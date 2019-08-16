@@ -32,15 +32,20 @@ bottlesRouter.post('/', middleware.validateToken, async (req, res, next) => {
 })
 
 bottlesRouter.put('/:id', middleware.validateToken, async (req, res, next) => {
-  const { beer, bottled, price, count, volume, expiration, user } = req.body
+  const { beer, user, bottled, price, count, volume, expiration } = req.body
 
-  const bottle = {
+  const newBottle = {
     price, count, volume, bottled, expiration, beer, user
   }
 
   try {
-    const updatedBottle = await Bottle
-      .findByIdAndUpdate(req.params.id, bottle, { new: true })
+    const decodedToken = jwt.verify(req.token, process.env.SECRET)
+
+    if (decodedToken.id.toString() !== user.toString()) {
+      res.status(401).send({ error: 'no authorization to update bottle' })
+    }
+
+    const updatedBottle = await Bottle.findByIdAndUpdate(req.params.id, newBottle, { new: true })
       .populate('beer', { ratings: 0 })
 
     res.status(201).json(updatedBottle.toJSON())
@@ -52,7 +57,18 @@ bottlesRouter.put('/:id', middleware.validateToken, async (req, res, next) => {
 
 bottlesRouter.delete('/:id', middleware.validateToken, async (req, res, next) => {
   try {
-    await Bottle.findOneAndRemove(req.params.id)
+    const decodedToken = jwt.verify(req.token, process.env.SECRET)
+    const bottle = await Bottle.findById(req.params.id)
+
+    if (!bottle) {
+      res.status(404).send({ error: 'no such bottle' })
+    }
+
+    if (decodedToken.id.toString() !== bottle.user.toString()) {
+      res.status(401).send({ error: 'no authorization to delete bottle' })
+    }
+
+    await bottle.remove()
     res.status(204).end()
 
   } catch (exception) {
