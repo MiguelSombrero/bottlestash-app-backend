@@ -3,7 +3,7 @@ const usersRouter = require('express').Router()
 const User = require('../models/user')
 
 usersRouter.get('/', async (req, res) => {
-  const users = await User.find({}).populate({ path: 'stash', select: 'price count volume bottled expiration beer',
+  const users = await User.find({}).populate({ path: 'stash',
     populate: { path: 'beer', select: 'brewery name abv',
       populate: { path: 'brewery', select: 'name' } }
   })
@@ -13,7 +13,7 @@ usersRouter.get('/', async (req, res) => {
 
 usersRouter.get('/:username', async (req, res, next) => {
   try {
-    const user = await User.findOne({ username: req.params.username }).populate({ path: 'stash', select: 'price count volume bottled expiration beer',
+    const user = await User.findOne({ username: req.params.username }).populate({ path: 'stash',
       populate: { path: 'beer', select: 'brewery name abv',
         populate: { path: 'brewery', select: 'name' } }
     })

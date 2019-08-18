@@ -1,7 +1,9 @@
 Day | Hours | Legend
 ----|-------|-------
-All | 89 |
-16.8 | 4 | Backend testing
+All | 106 |
+18.8 | 6 | Styling with Bootstrap
+17.8 | 7 | Refactor frontend, styling
+16.8 | 8 | Backend testing, refactoring frontend
 14.8 | 6 | router to remove and update rating, frontend add rating
 13.8 | 6 | refactoring frontend functionality to custom hooks
 12.8 | 3 | backend tests

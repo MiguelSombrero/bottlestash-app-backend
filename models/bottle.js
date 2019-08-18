@@ -18,6 +18,7 @@ const bottleSchema = new mongoose.Schema({
   },
   bottled: Date,
   expiration: Date,
+  added: Date,
   beer: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Beer',
@@ -37,6 +38,15 @@ bottleSchema.post('remove', async (bottle) => {
     { multi: true }
   )
 })
+
+/**
+bottleSchema.post('save', async (bottle) => {
+  await bottle.populate({ path: 'user', select: 'name hidden' })
+    .populate({ path: 'beer', select: 'brewery name abv',
+      populate: { path: 'brewery', select: 'name' } }
+    )
+})
+ */
 
 bottleSchema.set('toJSON', {
   transform: (document, returnedObject) => {

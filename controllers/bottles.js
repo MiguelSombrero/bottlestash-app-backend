@@ -5,7 +5,11 @@ const jwt = require('jsonwebtoken')
 const middleware = require('../utils/middleware')
 
 bottlesRouter.get('/', async (req, res) => {
-  const bottles = await Bottle.find({}).populate('beer', { ratings: 0 })
+  const bottles = await Bottle.find({}).populate({ path: 'user', select: 'name hidden' })
+    .populate({ path: 'beer', select: 'brewery name abv',
+      populate: { path: 'brewery', select: 'name' } }
+    )
+
   res.json(bottles.map(bottle => bottle.toJSON()))
 })
 
@@ -13,7 +17,7 @@ bottlesRouter.post('/', middleware.validateToken, async (req, res, next) => {
   const { beerId, bottled, price, count, volume, expiration } = req.body
 
   const bottle = new Bottle({
-    price, count, volume, bottled, expiration, beer: beerId
+    price, count, volume, bottled, expiration, beer: beerId, added: new Date()
   })
 
   try {
@@ -32,10 +36,10 @@ bottlesRouter.post('/', middleware.validateToken, async (req, res, next) => {
 })
 
 bottlesRouter.put('/:id', middleware.validateToken, async (req, res, next) => {
-  const { beer, user, bottled, price, count, volume, expiration } = req.body
+  const { beer, user, bottled, price, count, volume, expiration, added } = req.body
 
   const newBottle = {
-    price, count, volume, bottled, expiration, beer, user
+    price, count, volume, bottled, expiration, beer, user, added
   }
 
   try {
@@ -46,8 +50,6 @@ bottlesRouter.put('/:id', middleware.validateToken, async (req, res, next) => {
     }
 
     const updatedBottle = await Bottle.findByIdAndUpdate(req.params.id, newBottle, { new: true })
-      .populate('beer', { ratings: 0 })
-
     res.status(201).json(updatedBottle.toJSON())
 
   } catch (exception) {

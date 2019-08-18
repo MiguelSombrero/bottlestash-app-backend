@@ -6,7 +6,11 @@ const jwt = require('jsonwebtoken')
 const middleware = require('../utils/middleware')
 
 ratingsRouter.get('/', async (req, res) => {
-  const ratings = await Rating.find({}).populate('beer', { ratings: 0 })
+  const ratings = await Rating.find({}).populate({ path: 'user', select: 'name' })
+    .populate({ path: 'beer', select: 'brewery name abv',
+      populate: { path: 'brewery', select: 'name' } }
+    )
+
   res.json(ratings.map(rating => rating.toJSON()))
 })
 
