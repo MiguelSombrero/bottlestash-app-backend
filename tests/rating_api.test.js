@@ -32,13 +32,13 @@ beforeEach(async () => {
   await Promise.all(promiseArrayBeer)
 
   const bottles = helper.initialBottles
-    .map(bottle => new Bottle(bottle))
+    .map(bottle => new Bottle({ ...bottle, user: user._id }))
 
   const promiseArrayBottle = bottles.map(bottle => bottle.save())
   await Promise.all(promiseArrayBottle)
 
   const ratings = helper.initialRatings
-    .map(rating => new Rating(rating))
+    .map(rating => new Rating({ ...rating, user: user._id }))
 
   const promiseArrayRating = ratings.map(rating => rating.save())
   await Promise.all(promiseArrayRating)
@@ -70,6 +70,19 @@ describe('tests covering GETting ratings from database', () => {
       .expect('Content-Type', /application\/json/)
 
     expect(res.body[0].id).toBeDefined()
+  })
+
+  test('ratings is populated with user, beer and brewery', async () => {
+    const res = await api
+      .get('/api/ratings')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(res.body[0].beer.name).toBeDefined()
+    expect(res.body[0].beer.abv).toBeDefined()
+    expect(res.body[0].beer.brewery.name).toBeDefined()
+    expect(res.body[0].user.name).toBeDefined()
+    expect(res.body[0].user.hidden).toBeDefined()
   })
 })
 
@@ -313,6 +326,21 @@ describe('tests covering POSTing ratings in database', () => {
     const ratingsAtEnd = await helper.ratingsInDb()
     expect(ratingsAtEnd.length).toBe(helper.initialRatings.length)
     expect(res.body.error).toBe('token is missing')
+  })
+
+  test('returned rating is populated with user, beer and brewery', async () => {
+    const res = await api
+      .post('/api/ratings')
+      .set('Authorization', 'Bearer ' + login.body.token)
+      .send(helper.newRating)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(res.body.beer.name).toBeDefined()
+    expect(res.body.beer.abv).toBeDefined()
+    expect(res.body.beer.brewery.name).toBeDefined()
+    expect(res.body.user.name).toBeDefined()
+    expect(res.body.user.hidden).toBeDefined()
   })
 })
 

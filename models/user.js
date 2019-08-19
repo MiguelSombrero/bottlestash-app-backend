@@ -1,5 +1,8 @@
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
+const Bottle = require('./bottle')
+const Rating = require('./rating')
+const Beer = require('./beer')
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -35,6 +38,15 @@ const userSchema = new mongoose.Schema({
       ref: 'Rating'
     }
   ]
+})
+
+userSchema.pre('remove', async (user) => {
+  await Bottle.deleteMany({ user: user._id })
+  await Rating.deleteMany({ user: user._id })
+  await Beer.updateMany( {},
+    { $pull: { ratings: { user: user._id } } },
+    { multi: true }
+  )
 })
 
 userSchema.plugin(uniqueValidator)

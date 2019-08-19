@@ -39,15 +39,6 @@ bottleSchema.post('remove', async (bottle) => {
   )
 })
 
-/**
-bottleSchema.post('save', async (bottle) => {
-  await bottle.populate({ path: 'user', select: 'name hidden' })
-    .populate({ path: 'beer', select: 'brewery name abv',
-      populate: { path: 'brewery', select: 'name' } }
-    )
-})
- */
-
 bottleSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()

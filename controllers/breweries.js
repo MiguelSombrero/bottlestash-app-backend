@@ -2,15 +2,20 @@ const breweriesRouter = require('express').Router()
 const Brewery = require('../models/brewery')
 const middleware = require('../utils/middleware')
 
+const options = [
+  { path: 'beers', select: 'name abv' }
+]
+
 breweriesRouter.get('/', async (req, res) => {
-  const breweries = await Brewery.find({}).populate('beers', { ratings: 0, brewery: 0 })
+  const breweries = await Brewery.find({}).populate(options)
   res.json(breweries.map(brewery => brewery.toJSON()))
 })
 
 breweriesRouter.get('/:name', async (req, res, next) => {
   try {
-    const brewery = await Brewery.findOne({ name: req.params.name })
-      .populate('beers', { ratings: 0, brewery: 0 })
+    const brewery = await Brewery
+      .findOne({ name: req.params.name })
+      .populate(options)
 
     brewery === null
       ? res.status(204).end()
@@ -30,7 +35,8 @@ breweriesRouter.post('/', middleware.validateToken, async (req, res, next) => {
 
   try {
     const savedBrewery = await brewery.save()
-    res.json(savedBrewery.toJSON())
+    const populatedBrewery = await Brewery.populate(savedBrewery, options)
+    res.json(populatedBrewery.toJSON())
 
   } catch (exception) {
     next(exception)

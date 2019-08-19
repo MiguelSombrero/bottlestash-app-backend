@@ -5,12 +5,14 @@ const Beer = require('../models/beer')
 const jwt = require('jsonwebtoken')
 const middleware = require('../utils/middleware')
 
-ratingsRouter.get('/', async (req, res) => {
-  const ratings = await Rating.find({}).populate({ path: 'user', select: 'name' })
-    .populate({ path: 'beer', select: 'brewery name abv',
-      populate: { path: 'brewery', select: 'name' } }
-    )
+const options = [
+  { path: 'user', select: 'name' },
+  { path: 'beer', select: 'brewery name abv',
+    populate: { path: 'brewery', select: 'name' } }
+]
 
+ratingsRouter.get('/', async (req, res) => {
+  const ratings = await Rating.find({}).populate(options)
   res.json(ratings.map(rating => rating.toJSON()))
 })
 
@@ -18,7 +20,8 @@ ratingsRouter.post('/', middleware.validateToken, async (req, res, next) => {
   const { beerId, aroma, taste, mouthfeel, appearance, overall, description, ageofbeer } = req.body
 
   const rating = new Rating({
-    aroma, taste, mouthfeel, appearance, overall, description, rated: new Date(), ageofbeer, beer: beerId
+    aroma, taste, mouthfeel, appearance, overall,
+    description, rated: new Date(), ageofbeer, beer: beerId
   })
 
   try {
@@ -33,7 +36,8 @@ ratingsRouter.post('/', middleware.validateToken, async (req, res, next) => {
     await user.save()
     await beer.save()
 
-    res.json(savedRating.toJSON())
+    const populatedRating = await Rating.populate(savedRating, options)
+    res.json(populatedRating.toJSON())
 
   } catch (exception) {
     next(exception)

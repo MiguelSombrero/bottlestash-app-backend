@@ -106,9 +106,9 @@ describe('tests covering POSTing beers in database', () => {
 
   test('a valid beer is also saved in brewery', async () => {
     const res = await api
-      .post('/api/bottles')
+      .post('/api/beers')
       .set('Authorization', 'Bearer ' + login.body.token)
-      .send(helper.newBottle)
+      .send(helper.newBeer)
       .expect(200)
       .expect('Content-Type', /application\/json/)
 

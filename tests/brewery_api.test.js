@@ -55,6 +55,12 @@ describe('tests covering GETting breweries from database', () => {
 
     expect(res.body[0].id).toBeDefined()
   })
+
+  test('breweries are populated with beers', async () => {
+
+    // TESTAA TÄMÄ. PITÄÄ LUODA PANIMO NIIN, ETTÄ SILLÄ ON OLUITA
+
+  })
 })
 
 describe('tests covering GETting one brewery from database', () => {
@@ -88,6 +94,12 @@ describe('tests covering GETting one brewery from database', () => {
       .expect(204)
 
     expect(res.body).toStrictEqual({})
+  })
+
+  test('brewery is populated with beers', async () => {
+
+    // TESTAA TÄMÄ. PITÄÄ LUODA PANIMO NIIN, ETTÄ SILLÄ ON OLUITA
+
   })
 })
 
@@ -187,6 +199,12 @@ describe('tests covering POSTing breweries in database', () => {
     expect(beersAtEnd.length).toBe(helper.initialBeers.length)
     expect(res.body.error).toBe('token is missing')
      */
+  })
+
+  test('returned brewery is populated with beers', async () => {
+
+    // TESTAA TÄMÄ. PITÄÄ LUODA PANIMO NIIN, ETTÄ SILLÄ ON OLUITA
+
   })
 })
 

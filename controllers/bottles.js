@@ -4,11 +4,14 @@ const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 const middleware = require('../utils/middleware')
 
+const options = [
+  { path: 'user', select: 'name hidden' },
+  { path: 'beer', select: 'brewery name abv',
+    populate: { path: 'brewery', select: 'name' } }
+]
+
 bottlesRouter.get('/', async (req, res) => {
-  const bottles = await Bottle.find({}).populate({ path: 'user', select: 'name hidden' })
-    .populate({ path: 'beer', select: 'brewery name abv',
-      populate: { path: 'brewery', select: 'name' } }
-    )
+  const bottles = await Bottle.find({}).populate(options)
 
   res.json(bottles.map(bottle => bottle.toJSON()))
 })
@@ -17,7 +20,7 @@ bottlesRouter.post('/', middleware.validateToken, async (req, res, next) => {
   const { beerId, bottled, price, count, volume, expiration } = req.body
 
   const bottle = new Bottle({
-    price, count, volume, bottled, expiration, beer: beerId, added: new Date()
+    price, count, volume, beer: beerId, added: new Date(), bottled, expiration
   })
 
   try {
@@ -28,7 +31,8 @@ bottlesRouter.post('/', middleware.validateToken, async (req, res, next) => {
     user.stash = [...user.stash, savedBottle ]
     await user.save()
 
-    res.json(savedBottle.toJSON())
+    const populatedBottle = await Bottle.populate(savedBottle, options)
+    res.json(populatedBottle.toJSON())
 
   } catch (exception) {
     next(exception)
@@ -46,10 +50,13 @@ bottlesRouter.put('/:id', middleware.validateToken, async (req, res, next) => {
     const decodedToken = jwt.verify(req.token, process.env.SECRET)
 
     if (decodedToken.id.toString() !== user.toString()) {
-      res.status(401).send({ error: 'no authorization to update bottle' })
+      return res.status(401).send({ error: 'no authorization to update bottle' })
     }
 
-    const updatedBottle = await Bottle.findByIdAndUpdate(req.params.id, newBottle, { new: true })
+    const updatedBottle = await Bottle
+      .findByIdAndUpdate(req.params.id, newBottle, { new: true })
+      .populate(options)
+
     res.status(201).json(updatedBottle.toJSON())
 
   } catch (exception) {
@@ -63,11 +70,11 @@ bottlesRouter.delete('/:id', middleware.validateToken, async (req, res, next) =>
     const bottle = await Bottle.findById(req.params.id)
 
     if (!bottle) {
-      res.status(404).send({ error: 'no such bottle' })
+      return res.status(404).send({ error: 'no such bottle' })
     }
 
     if (decodedToken.id.toString() !== bottle.user.toString()) {
-      res.status(401).send({ error: 'no authorization to delete bottle' })
+      return res.status(401).send({ error: 'no authorization to delete bottle' })
     }
 
     await bottle.remove()

@@ -16,11 +16,23 @@ beforeEach(async () => {
   await Bottle.deleteMany({})
 
   const passwordHash = await bcrypt.hash('salainen', 10)
-  const user = new User({ username: 'Somero', passwordHash, name: 'Miika', email: 'miika.fi' })
+  const user = new User({
+    username: 'Somero',
+    passwordHash,
+    name: 'Miika',
+    email: 'miika.fi',
+    hidden: false
+  })
   await user.save()
 
   const passwordHash2 = await bcrypt.hash('salaisempi', 10)
-  const user2 = new User({ username: 'Luukkainen', passwordHash: passwordHash2, name: 'Masa', email: 'masa.fi' })
+  const user2 = new User({
+    username: 'Luukkainen',
+    passwordHash: passwordHash2,
+    name: 'Masa',
+    email: 'masa.fi',
+    hidden: true
+  })
   await user2.save()
 
   login = await api
@@ -67,6 +79,19 @@ describe('tests covering GETting bottles from database', () => {
       .expect('Content-Type', /application\/json/)
 
     expect(res.body[0].id).toBeDefined()
+  })
+
+  test('bottles is populated with user, beer and brewery', async () => {
+    const res = await api
+      .get('/api/bottles')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(res.body[0].beer.name).toBeDefined()
+    expect(res.body[0].beer.abv).toBeDefined()
+    expect(res.body[0].beer.brewery.name).toBeDefined()
+    expect(res.body[0].user.name).toBeDefined()
+    expect(res.body[0].user.hidden).toBeDefined()
   })
 })
 
@@ -257,6 +282,21 @@ describe('tests covering POSTing bottles in database', () => {
     // tulee status 500 eikä 401
 
   })
+
+  test('returned bottle is populated with user, beer and brewery', async () => {
+    const res = await api
+      .post('/api/bottles')
+      .set('Authorization', 'Bearer ' + login.body.token)
+      .send(helper.newBottle)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(res.body.beer.name).toBeDefined()
+    expect(res.body.beer.abv).toBeDefined()
+    expect(res.body.beer.brewery.name).toBeDefined()
+    expect(res.body.user.name).toBeDefined()
+    expect(res.body.user.hidden).toBeDefined()
+  })
 })
 
 describe('test covering DELETEing bottles', () => {
@@ -381,7 +421,7 @@ describe('tests covering PUTing existing bottles in database', () => {
       .expect(401)
 
     const bottlesAtEnd = await helper.bottlesInDb()
-    const updatedBottle = bottlesAtEnd.find(bottle => bottle.id === bottleToUpdate.id)
+    const updatedBottle = await bottlesAtEnd.find(bottle => bottle.id === bottleToUpdate.id)
     expect(bottleToUpdate.count).toBe(updatedBottle.count)
     expect(res.body.error).toBe('no authorization to update bottle')
   })
@@ -390,13 +430,39 @@ describe('tests covering PUTing existing bottles in database', () => {
     const bottlesAtStart = await helper.bottlesInDb()
     const bottleToUpdate = bottlesAtStart[0]
 
+    const newBottle = {
+      ... bottleToUpdate, count: bottleToUpdate.count + 1
+    }
+
     const res = await api
       .put(`/api/bottles/${bottleToUpdate.id}`)
+      .send(newBottle)
       .expect(401)
 
     const bottlesAtEnd = await helper.bottlesInDb()
     expect(bottlesAtEnd.length).toBe(bottlesAtStart.length)
     expect(res.body.error).toBe('token is missing')
+  })
+
+  test('updated bottle is populated with user, beer and brewery', async () => {
+    const bottlesAtStart = await helper.bottlesInDb()
+    const bottleToUpdate = bottlesAtStart[0]
+
+    const newBottle = {
+      ... bottleToUpdate, count: bottleToUpdate.count + 1
+    }
+
+    const res = await api
+      .put(`/api/bottles/${bottleToUpdate.id}`)
+      .send(newBottle)
+      .set('Authorization', 'Bearer ' + login.body.token)
+      .expect(201)
+
+    expect(res.body.beer.name).toBeDefined()
+    expect(res.body.beer.abv).toBeDefined()
+    expect(res.body.beer.brewery.name).toBeDefined()
+    expect(res.body.user.name).toBeDefined()
+    expect(res.body.user.hidden).toBeDefined()
   })
 })
 
