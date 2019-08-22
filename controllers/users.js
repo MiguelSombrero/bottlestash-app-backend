@@ -92,7 +92,7 @@ usersRouter.delete('/:id', middleware.validateToken, async (req, res, next) => {
       res.status(401).send({ error: 'no authorization to delete user' })
     }
 
-    await user.remove()
+    await user.deleteOne()
     res.status(204).end()
 
   } catch (exception) {

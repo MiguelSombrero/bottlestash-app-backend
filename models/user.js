@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema({
   ]
 })
 
-userSchema.pre('remove', async (user) => {
+userSchema.pre('deleteOne', async (user) => {
   await Bottle.deleteMany({ user: user._id })
   await Rating.deleteMany({ user: user._id })
   await Beer.updateMany( {},

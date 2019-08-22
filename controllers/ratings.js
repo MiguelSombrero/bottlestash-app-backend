@@ -21,7 +21,7 @@ ratingsRouter.post('/', middleware.validateToken, async (req, res, next) => {
 
   const rating = new Rating({
     aroma, taste, mouthfeel, appearance, overall,
-    description, rated: new Date(), ageofbeer, beer: beerId
+    description, added: new Date(), ageofbeer, beer: beerId
   })
 
   try {

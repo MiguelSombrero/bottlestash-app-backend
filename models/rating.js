@@ -31,7 +31,7 @@ const ratingSchema = new mongoose.Schema({
     min: 0,
     max: 20
   },
-  rated: {
+  added: {
     type: Date,
     required: true
   },

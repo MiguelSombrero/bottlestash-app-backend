@@ -77,7 +77,7 @@ bottlesRouter.delete('/:id', middleware.validateToken, async (req, res, next) =>
       return res.status(401).send({ error: 'no authorization to delete bottle' })
     }
 
-    await bottle.remove()
+    await bottle.deleteOne()
     res.status(204).end()
 
   } catch (exception) {

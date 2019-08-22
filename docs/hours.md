@@ -1,6 +1,7 @@
 Day | Hours | Legend
 ----|-------|-------
-All | 110 |
+All | 115 |
+22.8 | 5 | styling the frontend
 19.8 | 4 | put and delete router for User, tests
 18.8 | 6 | Styling with Bootstrap
 17.8 | 7 | Refactor frontend, styling
