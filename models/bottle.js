@@ -28,6 +28,10 @@ const bottleSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true
+  },
+  picture: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Picture'
   }
 })
 

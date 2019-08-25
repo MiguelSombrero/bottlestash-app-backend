@@ -12,20 +12,25 @@ const options = [
 
 bottlesRouter.get('/', async (req, res) => {
   const bottles = await Bottle.find({}).populate(options)
-
   res.json(bottles.map(bottle => bottle.toJSON()))
 })
 
 bottlesRouter.post('/', middleware.validateToken, async (req, res, next) => {
-  const { beerId, bottled, price, count, volume, expiration } = req.body
+  const { beerId, bottled, price, count, volume, expiration, pictureId } = req.body
 
   const bottle = new Bottle({
-    price, count, volume, beer: beerId, added: new Date(), bottled, expiration
+    price, count, volume, bottled, expiration,
+    picture: pictureId,
+    beer: beerId,
+    added: new Date()
   })
 
   try {
     const decodedToken = jwt.verify(req.token, process.env.SECRET)
     const user = await User.findById(decodedToken.id)
+
+    // tähän voisi lisätä kuvan hakemisen ja bottlen tallentamisen siihen
+
     bottle.user = user._id
     const savedBottle = await bottle.save()
     user.stash = [...user.stash, savedBottle ]

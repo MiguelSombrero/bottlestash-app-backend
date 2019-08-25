@@ -1,7 +1,9 @@
 Day | Hours | Legend
 ----|-------|-------
-All | 119 |
-23.8 | 4 | styling and implementing search functionality
+All | 125 |
+25.8 | 1 | frontend: saving pictures
+24.8 | 4 | new router for saving pictures
+23.8 | 6 | styling and implementing search functionality
 22.8 | 5 | styling the frontend
 19.8 | 4 | put and delete router for User, tests
 18.8 | 6 | Styling with Bootstrap
