@@ -1,7 +1,7 @@
 Day | Hours | Legend
 ----|-------|-------
-All | 125 |
-25.8 | 1 | frontend: saving pictures
+All | 130 |
+25.8 | 6 | frontend: saving pictures and form validation
 24.8 | 4 | new router for saving pictures
 23.8 | 6 | styling and implementing search functionality
 22.8 | 5 | styling the frontend

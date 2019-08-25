@@ -14,7 +14,7 @@ picturesRouter.get('/', async (req, res) => {
 picturesRouter.get('/:id', async (req, res) => {
   const picture = await Picture.findById(req.params.id)
   res.contentType(picture.contentType)
-  res.send(picture.data)
+  res.send(picture.content)
 })
 
 picturesRouter.post('/', upload.single('picture'), middleware.validateToken, async (req, res, next) => {
