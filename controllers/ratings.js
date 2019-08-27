@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken')
 const middleware = require('../utils/middleware')
 
 const options = [
-  { path: 'user', select: 'name' },
+  { path: 'user', select: 'name picture' },
   { path: 'beer', select: 'brewery name abv',
     populate: { path: 'brewery', select: 'name' } }
 ]

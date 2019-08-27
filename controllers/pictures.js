@@ -6,11 +6,6 @@ const middleware = require('../utils/middleware')
 const multer = require('multer')
 const upload = multer()
 
-picturesRouter.get('/', async (req, res) => {
-  const pictures = await Picture.find({})
-  res.json(pictures.map(p => p.toJSON()))
-})
-
 picturesRouter.get('/:id', async (req, res) => {
   const picture = await Picture.findById(req.params.id)
   res.contentType(picture.contentType)

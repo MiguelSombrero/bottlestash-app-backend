@@ -49,6 +49,10 @@ const ratingSchema = new mongoose.Schema({
     ref: 'Beer',
     required: true
   },
+  picture: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Picture'
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

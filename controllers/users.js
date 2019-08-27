@@ -13,7 +13,6 @@ const options = [
 
 usersRouter.get('/', async (req, res) => {
   const users = await User.find({}).populate(options)
-
   res.json(users.map(u => u.toJSON()))
 })
 
@@ -55,10 +54,10 @@ usersRouter.post('/', async (req, res, next) => {
 })
 
 usersRouter.put('/:id', middleware.validateToken, async (req, res, next) => {
-  const { name, email, hidden, country, city } = req.body
+  const { name, email, hidden, country, city, pictureId } = req.body
 
   const updatedUser = {
-    name, email, hidden, country, city
+    name, email, hidden, country, city, picture: pictureId
   }
 
   try {

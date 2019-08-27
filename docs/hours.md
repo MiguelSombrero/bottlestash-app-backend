@@ -1,6 +1,8 @@
 Day | Hours | Legend
 ----|-------|-------
-All | 130 |
+All | 139 |
+27.8 | 4 | picture attribute for user and rating models, styling
+26.8 | 5 | styling frontend and views Beer and Brewery
 25.8 | 6 | frontend: saving pictures and form validation
 24.8 | 4 | new router for saving pictures
 23.8 | 6 | styling and implementing search functionality

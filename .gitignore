@@ -2,3 +2,4 @@
 node_modules
 /docs/schema_definitions.md
 /docs/remember.md
+/tests/files/

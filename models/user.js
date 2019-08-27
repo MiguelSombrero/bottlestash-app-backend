@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema({
   hidden: Boolean,
   country: String,
   city: String,
+  picture: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Picture'
+  },
   stash: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -41,12 +45,12 @@ const userSchema = new mongoose.Schema({
 })
 
 userSchema.pre('deleteOne', async (user) => {
-  await Bottle.deleteMany({ user: user._id })
-  await Rating.deleteMany({ user: user._id })
-  await Beer.updateMany( {},
+  await Bottle.remove({ user: user._id }).exec()
+  await Rating.remove({ user: user._id }).exec()
+  await Beer.update( {},
     { $pull: { ratings: { user: user._id } } },
     { multi: true }
-  )
+  ).exec()
 })
 
 userSchema.plugin(uniqueValidator)

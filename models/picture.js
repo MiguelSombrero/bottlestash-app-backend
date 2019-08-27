@@ -8,16 +8,13 @@ const pictureSchema = new mongoose.Schema({
   },
   contentType: {
     type: String,
-    required: true
+    required: true,
+    match: /image\/*/
   },
   size: {
     type: Number,
     required: true,
     max: 16000000
-  },
-  bottle: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Bottle'
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
