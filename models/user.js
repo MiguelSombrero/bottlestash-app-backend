@@ -45,6 +45,8 @@ const userSchema = new mongoose.Schema({
 })
 
 userSchema.pre('deleteOne', async (user) => {
+  console.log('tullaanko middlewareen?', user)
+  
   await Bottle.remove({ user: user._id }).exec()
   await Rating.remove({ user: user._id }).exec()
   await Beer.update( {},

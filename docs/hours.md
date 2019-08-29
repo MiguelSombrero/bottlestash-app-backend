@@ -1,6 +1,8 @@
 Day | Hours | Legend
 ----|-------|-------
-All | 139 |
+All | 152 |
+29.8 | 6 | frontend testing
+28.8 | 7 | new views About and Ratings and styling
 27.8 | 4 | picture attribute for user and rating models, styling
 26.8 | 5 | styling frontend and views Beer and Brewery
 25.8 | 6 | frontend: saving pictures and form validation

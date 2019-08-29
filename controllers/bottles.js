@@ -29,8 +29,6 @@ bottlesRouter.post('/', middleware.validateToken, async (req, res, next) => {
     const decodedToken = jwt.verify(req.token, process.env.SECRET)
     const user = await User.findById(decodedToken.id)
 
-    // tähän voisi lisätä kuvan hakemisen ja bottlen tallentamisen siihen
-
     bottle.user = user._id
     const savedBottle = await bottle.save()
     user.stash = [...user.stash, savedBottle ]

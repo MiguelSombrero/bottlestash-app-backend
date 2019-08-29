@@ -1,6 +1,10 @@
 const bcrypt = require('bcrypt')
 const usersRouter = require('express').Router()
 const User = require('../models/user')
+const Bottle = require('../models/bottle')
+const Rating = require('../models/rating')
+const Beer = require('../models/beer')
+const Picture = require('../models/picture')
 const jwt = require('jsonwebtoken')
 const middleware = require('../utils/middleware')
 
@@ -90,6 +94,17 @@ usersRouter.delete('/:id', middleware.validateToken, async (req, res, next) => {
     if (decodedToken.id.toString() !== req.params.id.toString()) {
       res.status(401).send({ error: 'no authorization to delete user' })
     }
+
+    // nämä ei toimi vielä - ei poista mitään
+
+    const bottles = await Bottle.deleteMany({ 'user': user._id })
+    const ratings = await Rating.deleteMany({ user: user._id })
+    const pictures = await Picture.deleteMany({ user: user._id })
+
+    await Beer.update( {},
+      { $pull: { ratings: { user: user._id } } },
+      { multi: true }
+    )
 
     await user.deleteOne()
     res.status(204).end()
