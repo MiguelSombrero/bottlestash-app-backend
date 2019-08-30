@@ -2,46 +2,20 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
-const Beer = require('../models/beer')
-const User = require('../models/user')
-const Bottle = require('../models/bottle')
-const Rating = require('../models/rating')
 const helper = require('./test_helper')
-const bcrypt = require('bcrypt')
+
+/**
+ * Lacks tests concerning of adding picture for rating
+ */
 
 let login = null
 
 beforeEach(async () => {
-  await Beer.deleteMany({})
-  await User.deleteMany({})
-  await Bottle.deleteMany({})
-  await Rating.deleteMany({})
-
-  const passwordHash = await bcrypt.hash('salainen', 10)
-  const user = new User({ username: 'Somero', passwordHash, name: 'Miika' })
-  await user.save()
+  await helper.initializeDatabase()
 
   login = await api
     .post('/api/login')
     .send({ username: 'Somero', password: 'salainen' })
-
-  const beers = helper.initialBeers
-    .map(beer => new Beer(beer))
-
-  const promiseArrayBeer = beers.map(beer => beer.save())
-  await Promise.all(promiseArrayBeer)
-
-  const bottles = helper.initialBottles
-    .map(bottle => new Bottle({ ...bottle, user: user._id }))
-
-  const promiseArrayBottle = bottles.map(bottle => bottle.save())
-  await Promise.all(promiseArrayBottle)
-
-  const ratings = helper.initialRatings
-    .map(rating => new Rating({ ...rating, user: user._id }))
-
-  const promiseArrayRating = ratings.map(rating => rating.save())
-  await Promise.all(promiseArrayRating)
 })
 
 describe('tests covering GETting ratings from database', () => {
@@ -82,7 +56,6 @@ describe('tests covering GETting ratings from database', () => {
     expect(res.body[0].beer.abv).toBeDefined()
     expect(res.body[0].beer.brewery.name).toBeDefined()
     expect(res.body[0].user.name).toBeDefined()
-    expect(res.body[0].user.hidden).toBeDefined()
   })
 })
 
@@ -111,7 +84,8 @@ describe('tests covering POSTing ratings in database', () => {
 
     const users = await helper.usersInDb()
     const beers = await helper.beersInDb()
-    const beer = beers.find(beer => beer.id === res.body.beer)
+
+    const beer = beers.find(beer => beer.id === res.body.beer.id)
 
     expect(users[0].ratings.length).toBe(1)
     expect(users[0].ratings[0].toString()).toBe(res.body.id.toString())
@@ -142,13 +116,9 @@ describe('tests covering POSTing ratings in database', () => {
     expect(contents).toContain('5d3da448fe4a36ce485c14c4')
   })
 
-  test('rating without aroma cannot be added', async () => {
+  test('rating without required fields cannot be added', async () => {
     const newRating = {
-      taste: 8,
-      mouthfeel: 5,
-      appearance: 4,
-      overall: 18,
-      beerId: '5d3da448fe4a36ce485c14c4'
+      description: 'Very good beer, hih'
     }
 
     const res = await api
@@ -160,109 +130,14 @@ describe('tests covering POSTing ratings in database', () => {
     const ratingsAtEnd = await helper.ratingsInDb()
     expect(ratingsAtEnd.length).toBe(helper.initialRatings.length)
     expect(res.body.error).toContain('`aroma` is required')
-  })
-
-  test('rating without taste cannot be added', async () => {
-    const newRating = {
-      aroma: 8,
-      mouthfeel: 5,
-      appearance: 4,
-      overall: 18,
-      beerId: '5d3da448fe4a36ce485c14c4'
-    }
-
-    const res = await api
-      .post('/api/ratings')
-      .set('Authorization', 'Bearer ' + login.body.token)
-      .send(newRating)
-      .expect(400)
-
-    const ratingsAtEnd = await helper.ratingsInDb()
-    expect(ratingsAtEnd.length).toBe(helper.initialRatings.length)
     expect(res.body.error).toContain('`taste` is required')
-  })
-
-  test('rating without mouthfeel cannot be added', async () => {
-    const newRating = {
-      taste: 8,
-      aroma: 5,
-      appearance: 4,
-      overall: 18,
-      beerId: '5d3da448fe4a36ce485c14c4'
-    }
-
-    const res = await api
-      .post('/api/ratings')
-      .set('Authorization', 'Bearer ' + login.body.token)
-      .send(newRating)
-      .expect(400)
-
-    const ratingsAtEnd = await helper.ratingsInDb()
-    expect(ratingsAtEnd.length).toBe(helper.initialRatings.length)
     expect(res.body.error).toContain('`mouthfeel` is required')
-  })
-
-  test('rating without appearance cannot be added', async () => {
-    const newRating = {
-      taste: 8,
-      mouthfeel: 5,
-      aroma: 4,
-      overall: 18,
-      beerId: '5d3da448fe4a36ce485c14c4'
-    }
-
-    const res = await api
-      .post('/api/ratings')
-      .set('Authorization', 'Bearer ' + login.body.token)
-      .send(newRating)
-      .expect(400)
-
-    const ratingsAtEnd = await helper.ratingsInDb()
-    expect(ratingsAtEnd.length).toBe(helper.initialRatings.length)
     expect(res.body.error).toContain('`appearance` is required')
-  })
-
-  test('rating without overall cannot be added', async () => {
-    const newRating = {
-      taste: 8,
-      mouthfeel: 5,
-      appearance: 4,
-      aroma: 9,
-      beerId: '5d3da448fe4a36ce485c14c4'
-    }
-
-    const res = await api
-      .post('/api/ratings')
-      .set('Authorization', 'Bearer ' + login.body.token)
-      .send(newRating)
-      .expect(400)
-
-    const ratingsAtEnd = await helper.ratingsInDb()
-    expect(ratingsAtEnd.length).toBe(helper.initialRatings.length)
     expect(res.body.error).toContain('`overall` is required')
-  })
-
-  test('rating without beer cannot be added', async () => {
-    const newRating = {
-      taste: 8,
-      mouthfeel: 5,
-      appearance: 4,
-      aroma: 9,
-      overall: 16
-    }
-
-    const res = await api
-      .post('/api/ratings')
-      .set('Authorization', 'Bearer ' + login.body.token)
-      .send(newRating)
-      .expect(400)
-
-    const ratingsAtEnd = await helper.ratingsInDb()
-    expect(ratingsAtEnd.length).toBe(helper.initialRatings.length)
     expect(res.body.error).toContain('`beer` is required')
   })
 
-  test('beer with too high fields cannot be added', async () => {
+  test('rating with too high fields cannot be added', async () => {
     const newRating = {
       aroma: 11,
       taste: 11,
@@ -270,7 +145,7 @@ describe('tests covering POSTing ratings in database', () => {
       appearance: 6,
       overall: 21,
       ageofbeer: 361,
-      description: helper.stringOfLength(1001),
+      description: helper.stringOfLength(501),
       beerId: '5d3da448fe4a36ce485c14c4'
     }
 
@@ -340,7 +215,6 @@ describe('tests covering POSTing ratings in database', () => {
     expect(res.body.beer.abv).toBeDefined()
     expect(res.body.beer.brewery.name).toBeDefined()
     expect(res.body.user.name).toBeDefined()
-    expect(res.body.user.hidden).toBeDefined()
   })
 })
 

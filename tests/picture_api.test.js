@@ -13,8 +13,6 @@ let login = null
 
 const picture1 = fs.readFileSync(`${__dirname}/files/beer1.jpg`)
 
-console.log(picture1)
-
 beforeEach(async () => {
   await Picture.deleteMany({})
   await User.deleteMany({})
@@ -28,50 +26,22 @@ beforeEach(async () => {
     .send({ username: 'Somero', password: 'salainen' })
 })
 
-describe('tests covering GETting one picture from database', () => {
-  test('can fetch picture thats in the database', async () => {
-    const res = await api
-      .get('/api/pictures/5d4841d1f580955190e03e37/XII/12.2')
-      .expect(200)
-      .expect('Content-Type', /image\/*/)
-
-    
-  })
-
-  test('nothing is returned when fetching missing picture', async () => {
-    const res = await api
-      .get('/api/pictures/5d4841d1f580955190e03e37')
-      .expect(204)
-
-    expect(res.body).toStrictEqual({})
-  })
-})
-
 describe('tests covering POSTing pictures in database', () => {
   test('a valid picture can be added', async () => {
-    const picture = {
-      filename: 'beer1.jpg',
-      content: picture1,
-      contentType: 'image/jpg',
-      size: 5000
-    }
-
     const form = new FormData()
-    form.append('picture', picture)
+    form.append('picture', `${__dirname}/files/beer1.jpg`)
 
-    console.log(form)
-    
     const res = await api
       .post('/api/pictures')
       .set('Authorization', 'Bearer ' + login.body.token)
+      .set('Content-Type', 'multipart/form-data')
       .send(form)
       .expect(200)
-      .expect('Content-Type', /application\/json/)
-  
-      console.log(res)
-  })
+      .expect('Content-Type', /image\/*/)
 
-})  
+    console.log(res)
+  })
+})
 
 afterAll(() => {
   mongoose.connection.close()

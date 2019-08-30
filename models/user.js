@@ -1,15 +1,13 @@
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
-const Bottle = require('./bottle')
-const Rating = require('./rating')
-const Beer = require('./beer')
 
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
     unique: true,
-    minlength: 5
+    minlength: 5,
+    maxlength: 20
   },
   passwordHash: {
     type: String,
@@ -17,15 +15,27 @@ const userSchema = new mongoose.Schema({
   },
   name: {
     type: String,
-    required: true
+    required: true,
+    minlength: 1,
+    maxlength: 20
   },
   email: {
     type:String,
-    unique: true
+    unique: true,
+    minlength: 1,
+    maxlength: 50
   },
   hidden: Boolean,
-  country: String,
-  city: String,
+  country: {
+    type: String,
+    minlength: 1,
+    maxlength: 50
+  },
+  city: {
+    type: String,
+    minlength: 1,
+    maxlength: 50
+  },
   picture: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Picture'
@@ -42,17 +52,6 @@ const userSchema = new mongoose.Schema({
       ref: 'Rating'
     }
   ]
-})
-
-userSchema.pre('deleteOne', async (user) => {
-  console.log('tullaanko middlewareen?', user)
-  
-  await Bottle.remove({ user: user._id }).exec()
-  await Rating.remove({ user: user._id }).exec()
-  await Beer.update( {},
-    { $pull: { ratings: { user: user._id } } },
-    { multi: true }
-  ).exec()
 })
 
 userSchema.plugin(uniqueValidator)

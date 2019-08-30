@@ -6,20 +6,15 @@ const User = require('../models/user')
 const helper = require('./test_helper')
 const bcrypt = require('bcrypt')
 
+/**
+ * Lacks tests concerning of adding picture for user
+ * also tests for populating user
+ */
+
 let login = null
 
 beforeEach(async () => {
-  await User.deleteMany({})
-
-  const users = helper.initialUsers
-    .map(user => new User(user))
-
-  const promiseArray = users.map(user => user.save())
-  await Promise.all(promiseArray)
-
-  const passwordHash = await bcrypt.hash('salainen', 10)
-  const user = new User({ username: 'Rolli', passwordHash, name: 'Peikko', email: 'peikko@fi' })
-  await user.save()
+  await helper.initializeDatabase()
 
   const pass = await bcrypt.hash('salainen', 10)
   const user2 = new User({ username: 'ToinenKayttaja', passwordHash: pass, name: 'Toka', email: 'toinen@fi' })
@@ -40,7 +35,7 @@ describe('tests covering GETting users from database', () => {
 
   test('all users are returned', async () => {
     const usersAtStart = await helper.usersInDb()
-    expect(usersAtStart.length).toBe(helper.initialUsers.length + 2)
+    expect(usersAtStart.length).toBe(helper.initialUsers.length + 1)
   })
 
   test('a specific user is in the database', async () => {
@@ -58,6 +53,42 @@ describe('tests covering GETting users from database', () => {
     expect(res.body[0].id).toBeDefined()
     expect(res.body[0]._id).not.toBeDefined()
   })
+
+  /** not yet working correctly
+  test('users are populated correctly', async () => {
+    const res = await api
+      .get('/api/users')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(res.body).toContainEqual({
+      id: '5d4bc0527958a42219ca2032',
+      username: 'Rölli',
+      name: 'Peikko',
+      email: 'www.rolli-peikko.fi',
+      stash: [
+        {
+          id: '9d3da464fe4a36ce485c14c3',
+          count: 2,
+          volume: 0.33,
+          price: 4.90,
+          bottled: new Date('03.05.2019').toISOString(),
+          expiration: new Date('01.01.2020').toISOString(),
+          beer: {
+            id: '5d3da458fe4a36ce485c14c5',
+            brewery: {
+              id: '5d4841d1f580955190e03e37',
+              name: 'Westvleteren'
+            },
+            name: 'XII',
+            abv: 12.2
+          }
+        }
+      ],
+      ratings: []
+    })
+  })
+  */
 })
 
 describe('tests covering POSTing users in database', () => {
@@ -144,7 +175,7 @@ describe('tests covering POSTing users in database', () => {
       .expect(401)
       .expect('Content-Type', /application\/json/)
 
-    expect(res.body.error).toContain('password too short')
+    expect(res.body.error).toContain('password must be between 5-20 characters')
     const usersAtEnd = await helper.usersInDb()
     expect(usersAtEnd.length).toBe(usersAtStart.length)
   })
@@ -186,7 +217,7 @@ describe('tests covering POSTing users in database', () => {
       .expect(401)
       .expect('Content-Type', /application\/json/)
 
-    expect(res.body.error).toContain('password too short')
+    expect(res.body.error).toContain('password must be between 5-20 characters')
     const usersAtEnd = await helper.usersInDb()
     expect(usersAtEnd.length).toBe(usersAtStart.length)
   })
@@ -283,7 +314,7 @@ describe('test covering DELETEing users', () => {
       .set('Authorization', 'Bearer ' + login.body.token)
       .expect(404)
 
-    const usersAtEnd = await helper.userssInDb()
+    const usersAtEnd = await helper.usersInDb()
     expect(usersAtEnd.length).toBe(usersAtStart.length)
     expect(res.body.error).toBe('no such user')
   })
@@ -305,10 +336,10 @@ describe('test covering DELETEing users', () => {
 describe('tests covering PUTing existing user in database', () => {
   test('updating existing user works', async () => {
     const usersAtStart = await helper.usersInDb()
-    const userToUpdate = usersAtStart[0]
+    const user = usersAtStart.find(u => u.username === 'Rolli')
 
     const newUser = {
-      ...userToUpdate,
+      ...user,
       name: 'Hillevi',
       email: 'hillevi.fi',
       country: 'Jamaica',
@@ -317,15 +348,14 @@ describe('tests covering PUTing existing user in database', () => {
     }
 
     await api
-      .put(`/api/users/${userToUpdate.id}`)
+      .put(`/api/users/${user.id}`)
       .send(newUser)
       .set('Authorization', 'Bearer ' + login.body.token)
       .expect(201)
 
     const usersAtEnd = await helper.usersInDb()
-    const updatedUser = usersAtEnd.find(u => u.id.toString() === userToUpdate.id.toString())
+    const updatedUser = usersAtEnd.find(u => u.username === 'Rolli')
 
-    expect(usersAtEnd.length).toBe(usersAtStart.length)
     expect(updatedUser.name).toBe('Hillevi')
     expect(updatedUser.email).toBe('hillevi.fi')
     expect(updatedUser.country).toBe('Jamaica')
@@ -335,7 +365,7 @@ describe('tests covering PUTing existing user in database', () => {
 
   test('cannot update someone else', async () => {
     const usersAtStart = await helper.usersInDb()
-    const userToUpdate = usersAtStart[0]
+    const userToUpdate = usersAtStart.find(u => u.username === 'Rolli')
 
     const newUser = {
       ...userToUpdate,
@@ -357,7 +387,7 @@ describe('tests covering PUTing existing user in database', () => {
       .expect(401)
 
     const usersAtEnd = await helper.usersInDb()
-    const updatedUser = usersAtEnd.find(u => u.id.toString() === userToUpdate.id.toString())
+    const updatedUser = usersAtEnd.find(u => u.username === 'Rolli')
 
     expect(updatedUser.name).not.toBe('Hillevi')
     expect(updatedUser.email).not.toBe('hillevi.fi')

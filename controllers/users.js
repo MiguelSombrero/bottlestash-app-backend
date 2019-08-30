@@ -36,9 +36,9 @@ usersRouter.get('/:username', async (req, res, next) => {
 usersRouter.post('/', async (req, res, next) => {
   const { password, username, name, email, hidden, country, city } = req.body
 
-  if (password.length < 5) {
+  if (password.length < 5 || password.length > 20) {
     return res.status(401).json({
-      error: 'password too short'
+      error: 'password must be between 5-20 characters'
     })
   }
 
@@ -68,7 +68,7 @@ usersRouter.put('/:id', middleware.validateToken, async (req, res, next) => {
     const decodedToken = jwt.verify(req.token, process.env.SECRET)
 
     if (decodedToken.id.toString() !== req.params.id.toString()) {
-      res.status(401).send({ error: 'no authorization to update user' })
+      return res.status(401).send({ error: 'no authorization to update user' })
     }
 
     const savedUser = await User
@@ -85,23 +85,23 @@ usersRouter.put('/:id', middleware.validateToken, async (req, res, next) => {
 usersRouter.delete('/:id', middleware.validateToken, async (req, res, next) => {
   try {
     const decodedToken = jwt.verify(req.token, process.env.SECRET)
-    const user = User.findById(req.params.id)
+    const user = await User.findById(req.params.id)
 
     if (!user) {
-      res.status(404).send({ error: 'no such users' })
+      return res.status(404).send({ error: 'no such user' })
     }
 
     if (decodedToken.id.toString() !== req.params.id.toString()) {
-      res.status(401).send({ error: 'no authorization to delete user' })
+      return res.status(401).send({ error: 'no authorization to delete user' })
     }
 
-    // nämä ei toimi vielä - ei poista mitään
+    await Bottle.deleteMany({ user: user._id })
+    await Rating.deleteMany({ user: user._id })
+    await Picture.deleteMany({ user: user._id })
 
-    const bottles = await Bottle.deleteMany({ 'user': user._id })
-    const ratings = await Rating.deleteMany({ user: user._id })
-    const pictures = await Picture.deleteMany({ user: user._id })
-
-    await Beer.update( {},
+    // tämä ei toimi
+    await Beer.updateMany(
+      { ratings: { $in: [ user._id ] } },
       { $pull: { ratings: { user: user._id } } },
       { multi: true }
     )

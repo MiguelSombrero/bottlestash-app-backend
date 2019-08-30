@@ -2,38 +2,16 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
-const Beer = require('../models/beer')
-const User = require('../models/user')
-const Brewery = require('../models/brewery')
 const helper = require('./test_helper')
-const bcrypt = require('bcrypt')
 
 let login = null
 
 beforeEach(async () => {
-  await Beer.deleteMany({})
-  await User.deleteMany({})
-  await Brewery.deleteMany({})
-
-  const passwordHash = await bcrypt.hash('salainen', 10)
-  const user = new User({ username: 'Somero', passwordHash, name: 'Miika' })
-  await user.save()
+  await helper.initializeDatabase()
 
   login = await api
     .post('/api/login')
     .send({ username: 'Somero', password: 'salainen' })
-
-  const breweries = helper.initialBreweries
-    .map(brewery => new Brewery(brewery))
-
-  const breweryPromiseArray = breweries.map(brewery => brewery.save())
-  await Promise.all(breweryPromiseArray)
-
-  const beers = helper.initialBeers
-    .map(beer => new Beer(beer))
-
-  const promiseArray = beers.map(beer => beer.save())
-  await Promise.all(promiseArray)
 })
 
 describe('tests covering GETting beers from database', () => {
@@ -42,6 +20,24 @@ describe('tests covering GETting beers from database', () => {
       .get('/api/beers')
       .expect(200)
       .expect('Content-Type', /application\/json/)
+  })
+
+  test('beers are populated correctly', async () => {
+    const res = await api
+      .get('/api/beers')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(res.body).toContainEqual({
+      id: '5d3da458fe4a36ce485c14c5',
+      brewery: {
+        id: '5d4841d1f580955190e03e37',
+        name: 'Westvleteren'
+      },
+      name: 'XII',
+      abv: 12.2,
+      ratings: []
+    })
   })
 
   test('all beers are returned', async () => {
@@ -74,7 +70,10 @@ describe('tests covering GETting one beer from database', () => {
 
     expect(res.body).toMatchObject({
       id: '5d3da458fe4a36ce485c14c5',
-      brewery: '5d4841d1f580955190e03e37',
+      brewery: {
+        id: '5d4841d1f580955190e03e37',
+        name: 'Westvleteren'
+      },
       name: 'XII',
       abv: 12.2
     })
@@ -113,7 +112,7 @@ describe('tests covering POSTing beers in database', () => {
       .expect('Content-Type', /application\/json/)
 
     const breweries = await helper.breweriesInDb()
-    const brewery = breweries.find(brewery => brewery.id === res.body.brewery)
+    const brewery = breweries.find(brewery => brewery.id === res.body.brewery.id)
 
     expect(brewery.beers.length).toBe(1)
     expect(brewery.beers[0].toString()).toBe(res.body.id.toString())
@@ -228,23 +227,6 @@ describe('tests covering POSTing beers in database', () => {
     const beersAtEnd = await helper.beersInDb()
     expect(beersAtEnd.length).toBe(helper.initialBeers.length)
     expect(res.body.error).toBe('token is missing')
-  })
-
-  test('cannot add beer if token is invalid', async () => {
-    // tätä en ole saanut toistaiseksi toimimaan
-    // tulee status 500 eikä 401
-
-    /**
-    const res = await api
-      .post('/api/beers')
-      .set('Authorization', 'Bearer wrongtoken')
-      .send(helper.newBeer)
-      .expect(401)
-
-    const beersAtEnd = await helper.beersInDb()
-    expect(beersAtEnd.length).toBe(helper.initialBeers.length)
-    expect(res.body.error).toBe('token is missing')
-     */
   })
 })
 

@@ -2,30 +2,16 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
-const User = require('../models/user')
-const Brewery = require('../models/brewery')
 const helper = require('./test_helper')
-const bcrypt = require('bcrypt')
 
 let login = null
 
 beforeEach(async () => {
-  await User.deleteMany({})
-  await Brewery.deleteMany({})
-
-  const passwordHash = await bcrypt.hash('salainen', 10)
-  const user = new User({ username: 'Somero', passwordHash, name: 'Miika' })
-  await user.save()
+  await helper.initializeDatabase()
 
   login = await api
     .post('/api/login')
     .send({ username: 'Somero', password: 'salainen' })
-
-  const breweries = helper.initialBreweries
-    .map(brewery => new Brewery(brewery))
-
-  const promiseArray = breweries.map(brewery => brewery.save())
-  await Promise.all(promiseArray)
 })
 
 describe('tests covering GETting breweries from database', () => {
@@ -57,9 +43,22 @@ describe('tests covering GETting breweries from database', () => {
   })
 
   test('breweries are populated with beers', async () => {
+    const res = await api
+      .get('/api/breweries')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
 
-    // TESTAA TÄMÄ. PITÄÄ LUODA PANIMO NIIN, ETTÄ SILLÄ ON OLUITA
-
+    expect(res.body).toContainEqual({
+      id: '5d4841d1f580955190e03e37',
+      name: 'Westvleteren',
+      beers: [
+        {
+          id: '5d3da458fe4a36ce485c14c5',
+          name: 'XII',
+          abv: 12.2
+        }
+      ]
+    })
   })
 })
 
@@ -97,9 +96,22 @@ describe('tests covering GETting one brewery from database', () => {
   })
 
   test('brewery is populated with beers', async () => {
+    const res = await api
+      .get('/api/breweries/Westvleteren')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
 
-    // TESTAA TÄMÄ. PITÄÄ LUODA PANIMO NIIN, ETTÄ SILLÄ ON OLUITA
-
+    expect(res.body).toEqual({
+      id: '5d4841d1f580955190e03e37',
+      name: 'Westvleteren',
+      beers: [
+        {
+          id: '5d3da458fe4a36ce485c14c5',
+          name: 'XII',
+          abv: 12.2
+        }
+      ]
+    })
   })
 })
 
@@ -182,29 +194,6 @@ describe('tests covering POSTing breweries in database', () => {
     const breweriesAtEnd = await helper.breweriesInDb()
     expect(breweriesAtEnd.length).toBe(helper.initialBreweries.length)
     expect(res.body.error).toBe('token is missing')
-  })
-
-  test('cannot add brewery if token is invalid', async () => {
-    // tätä en ole saanut toistaiseksi toimimaan
-    // tulee status 500 eikä 401
-
-    /**
-    const res = await api
-      .post('/api/breweries')
-      .set('Authorization', 'Bearer wrongtoken')
-      .send(helper.newBeer)
-      .expect(401)
-
-    const beersAtEnd = await helper.beersInDb()
-    expect(beersAtEnd.length).toBe(helper.initialBeers.length)
-    expect(res.body.error).toBe('token is missing')
-     */
-  })
-
-  test('returned brewery is populated with beers', async () => {
-
-    // TESTAA TÄMÄ. PITÄÄ LUODA PANIMO NIIN, ETTÄ SILLÄ ON OLUITA
-
   })
 })
 

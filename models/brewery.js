@@ -10,7 +10,8 @@ const brewerySchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    maxlength: 500
   },
   beers: [
     {

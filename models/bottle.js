@@ -5,20 +5,35 @@ const bottleSchema = new mongoose.Schema({
   count: {
     type: Number,
     required: true,
-    min: 0
+    min: 0,
+    max: 50
   },
   volume: {
     type: Number,
     required: true,
-    min: 0.0
+    min: 0.0,
+    max: 10
   },
   price: {
     type: Number,
-    min: 0.0
+    min: 0.0,
+    max: 500
   },
-  bottled: Date,
-  expiration: Date,
-  added: Date,
+  bottled: {
+    type: Date,
+    min: '1990-01-01',
+    max: '2050-01-01'
+  },
+  expiration: {
+    type: Date,
+    min: '1990-01-01',
+    max: '2050-01-01'
+  },
+  added: {
+    type: Date,
+    min: '2019-01-01',
+    max: '2050-01-01'
+  },
   beer: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Beer',

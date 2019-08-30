@@ -42,7 +42,7 @@ const ratingSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    maxlength: 1000
+    maxlength: 500
   },
   beer: {
     type: mongoose.Schema.Types.ObjectId,

@@ -1,6 +1,7 @@
 Day | Hours | Legend
 ----|-------|-------
-All | 152 |
+All | 157 |
+30.8 | 5 | updating documentation and backend tests
 29.8 | 6 | frontend testing
 28.8 | 7 | new views About and Ratings and styling
 27.8 | 4 | picture attribute for user and rating models, styling

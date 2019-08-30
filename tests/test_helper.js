@@ -3,28 +3,29 @@ const Bottle = require('../models/bottle')
 const User = require('../models/user')
 const Brewery = require('../models/brewery')
 const Rating = require('../models/rating')
+const bcrypt = require('bcrypt')
 
 const initialUsers = [
   {
     _id: '5d4bc0527958a42219ca2034',
     username: 'Somero',
-    passwordHash: 'salainen',
     name: 'Miika',
-    email: 'miika.fi'
+    email: 'miika.fi',
+    hidden: false
   },
   {
     _id: '5d4bc0527958a42219ca2033',
     username: 'Luukkainen',
-    passwordHash: 'salaisempi',
     name: 'Masa',
-    email: 'masa.fi'
+    email: 'masa.fi',
+    hidden: true
   },
   {
     _id: '5d4bc0527958a42219ca2032',
-    username: 'Rölli',
-    passwordHash: 'peikko',
+    username: 'Rolli',
     name: 'Peikko',
-    email: 'www.rolli-peikko.fi'
+    email: 'www.rolli-peikko.fi',
+    hidden: false
   },
 ]
 
@@ -43,7 +44,12 @@ const initialBreweries = [
   },
   {
     _id: '5d4841d1f580955190e03e33',
-    name: 'Alesmith'
+    name: 'Alesmith',
+    beers: [
+      '5d3da427fe4a36ce485c14c3',
+      '5d3da448fe4a36ce485c14c4',
+      '5d4841d1f580955190e03e33'
+    ]
   },
   {
     _id: '5d4841d1f580955190e03e32',
@@ -52,6 +58,13 @@ const initialBreweries = [
   {
     _id: '5d4841d1f580955190e03e31',
     name: 'Mikkeller'
+  },
+  {
+    _id: '5d4841d1f580955190e03e37',
+    name: 'Westvleteren',
+    beers: [
+      '5d3da458fe4a36ce485c14c5'
+    ]
   }
 ]
 
@@ -91,14 +104,16 @@ const newBeer = {
 
 const initialBottles = [
   {
+    _id: '9d3da464fe4a36ce485c14c3',
     count: 2,
     volume: 0.33,
     price: 4.90,
     bottled: new Date('03.05.2019').toISOString(),
     expiration: new Date('01.01.2020').toISOString(),
-    beer: '5d3da427fe4a36ce485c14c3'
+    beer: '5d3da458fe4a36ce485c14c5'
   },
   {
+    _id: '8d3da464fe4a36ce485c14c3',
     count: 1,
     volume: 0.50,
     price: 5.89,
@@ -107,6 +122,7 @@ const initialBottles = [
     beer: '5d3da448fe4a36ce485c14c4'
   },
   {
+    _id: '7d3da464fe4a36ce485c14c3',
     count: 6,
     volume: 0.66,
     price: 9.90,
@@ -115,6 +131,7 @@ const initialBottles = [
     beer: '5d3da458fe4a36ce485c14c5'
   },
   {
+    _id: '6d3da464fe4a36ce485c14c3',
     count: 1,
     volume: 0.33,
     price: 7.90,
@@ -136,36 +153,39 @@ const newBottle = {
 
 const initialRatings = [
   {
+    _id: '9d3da464fe4a36ce485c14c9',
     aroma: 6,
     taste: 8,
     mouthfeel: 4,
     appearance: 4,
     overall: 17,
-    rated: new Date('08.29.2019').toISOString(),
+    added: new Date('08.29.2019').toISOString(),
     ageofbeer: 23,
     description: 'wery delicate taste, with hints of chocolate. Liked!',
     beer: '5d3da458fe4a36ce485c14c5',
     user: '5d4bc0527958a42219ca2034'
   },
   {
+    _id: '8d3da464fe4a36ce485c14c9',
     aroma: 5,
     taste: 7,
     mouthfeel: 4,
     appearance: 3,
     overall: 14,
-    rated: new Date('02.01.2019').toISOString(),
+    added: new Date('02.01.2019').toISOString(),
     ageofbeer: 6,
     description: 'A bit alcoholy aftertaste. Light yellow body. Not too good.',
     beer: '5d3da448fe4a36ce485c14c4',
     user: '5d4bc0527958a42219ca2034'
   },
   {
+    _id: '7d3da464fe4a36ce485c14c9',
     aroma: 8,
     taste: 8,
     mouthfeel: 5,
     appearance: 4,
     overall: 18,
-    rated: new Date('12.12.2018').toISOString(),
+    added: new Date('12.12.2018').toISOString(),
     ageofbeer: 34,
     description: 'Best Imperial Stout I have ever tasted!',
     beer: '5d3da448fe4a36ce485c14c4',
@@ -182,6 +202,46 @@ const newRating = {
   ageofbeer: 35,
   description: 'Very blanced and soft. Coffee and salty liqourice.',
   beerId: '5d3da448fe4a36ce485c14c4'
+}
+
+const initializeDatabase = async () => {
+  await Beer.deleteMany({})
+  await User.deleteMany({})
+  await Brewery.deleteMany({})
+  await Bottle.deleteMany({})
+  await Rating.deleteMany({})
+
+  const passwordHash = await bcrypt.hash('salainen', 10)
+
+  const users = initialUsers
+    .map(user => new User({ ...user, passwordHash }))
+
+  const promiseArrayUsers = users.map(user => user.save())
+  await Promise.all(promiseArrayUsers)
+
+  const breweries = initialBreweries
+    .map(brewery => new Brewery(brewery))
+
+  const breweryPromiseArray = breweries.map(brewery => brewery.save())
+  await Promise.all(breweryPromiseArray)
+
+  const beers = initialBeers
+    .map(beer => new Beer(beer))
+
+  const promiseArray = beers.map(beer => beer.save())
+  await Promise.all(promiseArray)
+
+  const bottles = initialBottles
+    .map(bottle => new Bottle({ ...bottle, user: '5d4bc0527958a42219ca2034' }))
+
+  const promiseArrayBottle = bottles.map(bottle => bottle.save())
+  await Promise.all(promiseArrayBottle)
+
+  const ratings = initialRatings
+    .map(rating => new Rating({ ...rating, user: '5d4bc0527958a42219ca2034' }))
+
+  const promiseArrayRating = ratings.map(rating => rating.save())
+  await Promise.all(promiseArrayRating)
 }
 
 const ratingsInDb = async () => {
@@ -227,5 +287,6 @@ module.exports = {
   ratingsInDb,
   initialRatings,
   newRating,
-  stringOfLength
+  stringOfLength,
+  initializeDatabase
 }

@@ -35,8 +35,7 @@ breweriesRouter.post('/', middleware.validateToken, async (req, res, next) => {
 
   try {
     const savedBrewery = await brewery.save()
-    const populatedBrewery = await Brewery.populate(savedBrewery, options)
-    res.json(populatedBrewery.toJSON())
+    res.json(savedBrewery.toJSON())
 
   } catch (exception) {
     next(exception)

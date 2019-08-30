@@ -1,17 +1,18 @@
 # Bottlestash App (backend)
 
-This is a project work for the Helsinki University course [Full Stack Open 2019](https://fullstackopen.com/). Bottlestash is an application that lets you manage your beer cellar, rate beers and more. Notice that this repository is for the apps backend only. You can find frontend repository from [HERE](https://github.com/MiguelSombrero/bottlestash-app-frontend)
+This is a project work for the Helsinki University course [Full Stack Open 2019](https://fullstackopen.com/). Bottlestash is an application that lets you manage your beer cellar, rate beers and more.
 
-THIS PROJECT IS IN DEVELOPMENT AND WILL BE UPDATED
+This repository is for the apps backend only, allthough all documentation will be in this repository. You can find frontend repository from [bottlestash-app-frontend](https://github.com/MiguelSombrero/bottlestash-app-frontend)
 
 ## Main features
 
 - Save beers in your stash to keep track what beers you have
-- Rate beers you drink
 - Search for stashes to see what beers other users have
-- ...
+- Rate beers and read ratings from others
 
 ## Documentation
+
+[Clone and install](https://github.com/MiguelSombrero/bottlestash-app-backend/tree/master/docs/instructions.md)
 
 [User Manual](https://github.com/MiguelSombrero/bottlestash-app-backend/tree/master/docs/user_manual.md)
 
@@ -27,10 +28,8 @@ The latest version of this application is running on Heroku and you can find it 
 
 ### Backend
 
-Server side functionality is implemented with Node.js and Express-library.
+Server side functionality is implemented with Node.js and Express-library. Data is persisted with axios and MongoDb.
 
 ### Frontend
 
-Client side is implemented with React ...
-
-## Clone and install the project
+Client side is implemented with React. React-bootstrap is used for styling the app.
