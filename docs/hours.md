@@ -1,6 +1,8 @@
 Day | Hours | Legend
 ----|-------|-------
-All | 157 |
+All | 166 |
+01.9 | 2 | some tests and refactoring
+31.8 | 7 | optimizing frontend for mobile, tests
 30.8 | 5 | updating documentation and backend tests
 29.8 | 6 | frontend testing
 28.8 | 7 | new views About and Ratings and styling

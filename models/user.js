@@ -28,12 +28,10 @@ const userSchema = new mongoose.Schema({
   hidden: Boolean,
   country: {
     type: String,
-    minlength: 1,
     maxlength: 50
   },
   city: {
     type: String,
-    minlength: 1,
     maxlength: 50
   },
   picture: {
