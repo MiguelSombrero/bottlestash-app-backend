@@ -41,6 +41,10 @@ app.use('/api/breweries', breweriesRouter)
 app.use('/api/ratings', ratingsRouter)
 app.use('/api/pictures', picturesRouter)
 
+app.get('*', (req, res) => {
+  res.sendFile(`${__dirname}/build/index.html`)
+})
+
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 

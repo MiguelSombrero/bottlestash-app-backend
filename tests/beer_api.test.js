@@ -104,6 +104,9 @@ describe('tests covering POSTing beers in database', () => {
   })
 
   test('a valid beer is also saved in brewery', async () => {
+    const breweriesAtStart = await helper.breweriesInDb()
+    const breweryAtStart = breweriesAtStart.find(brewery => brewery.id === helper.newBeer.breweryId)
+
     const res = await api
       .post('/api/beers')
       .set('Authorization', 'Bearer ' + login.body.token)
@@ -111,11 +114,10 @@ describe('tests covering POSTing beers in database', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/)
 
-    const breweries = await helper.breweriesInDb()
-    const brewery = breweries.find(brewery => brewery.id === res.body.brewery.id)
+    const breweriesAtEnd = await helper.breweriesInDb()
+    const breweryAtEnd = breweriesAtEnd.find(brewery => brewery.id === res.body.brewery.id)
 
-    expect(brewery.beers.length).toBe(1)
-    expect(brewery.beers[0].toString()).toBe(res.body.id.toString())
+    expect(breweryAtEnd.beers.length).toBe(breweryAtStart.beers.length + 1)
   })
 
   test('ratings of an added beer is an empty array', async () => {

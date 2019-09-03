@@ -6,7 +6,7 @@ To run the project on your own machine you must have [Node.js](https://nodejs.or
 
 ## Cloning project
 
-Clone project to your computer:
+Clone projects backend to your machine:
 
     git clone https://github.com/MiguelSombrero/bottlestash-app-backend
 
@@ -24,7 +24,7 @@ This project uses [dotenv](https://www.npmjs.com/package/dotenv) -library to han
 
 ## Install dependencies and run
 
-Navigate in cloned folder (bottlestash-app-backend), install dependencies and start application
+Navigate in cloned backend folder (bottlestash-app-backend), install dependencies and start application
 
     npm install
     npm run start
