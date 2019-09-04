@@ -7,13 +7,14 @@ const Picture = require('../models/picture')
 const bcrypt = require('bcrypt')
 const FormData = require('form-data')
 const fs = require('fs')
+const FileApi = require('file-api')
+const File = FileApi.File
 
 /**
  * no tests for pictures written yet!
  */
 
 let login = null
-let picture = null
 
 beforeEach(async () => {
   await Picture.deleteMany({})
@@ -29,8 +30,10 @@ beforeEach(async () => {
 })
 
 describe('tests covering POSTing pictures in database', () => {
+
+  // not yet working
   test('a valid picture can be added', async () => {
-    picture = await fs.readFileSync(`${__dirname}/files/beer1.jpg`)
+    const picture = await new File(`${__dirname}/files/beer1.jpg`)
     const form = new FormData()
     form.append('picture', picture)
 
@@ -42,6 +45,11 @@ describe('tests covering POSTing pictures in database', () => {
       .expect(200)
       .expect('Content-Type', /image\/*/)
 
+    expect(res.body.filename).toBeDefined()
+    expect(res.body.content).toBeDefined()
+    expect(res.body.contentType).toBeDefined()
+    expect(res.body.size).toBeDefined()
+    expect(res.body.user).toBeDefined()
   })
 })
 

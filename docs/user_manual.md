@@ -4,6 +4,8 @@
 
 When application starts, you see a home page and a navigation bar with three links: Home, Login and Create account. To use the application, you must create an account (so click Create account).
 
+Note: email is required, but registration form doesn't check the validity of an email, so you can provide whatever string you like.
+
 After succesfull creation you will be redirected to Login page. Login with your credentials, and you will be redirected to Home page.
 
 ## Home page

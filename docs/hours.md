@@ -1,7 +1,8 @@
 Day | Hours | Legend
 ----|-------|-------
-All | 177 |
-03.9 | 4 | tests and documentation, catch all router
+All | 182 |
+04.9 | 3 | minor fixes and betterments
+03.9 | 6 | tests and documentation, catch all router, styling
 02.9 | 3 | frontend testing
 01.9 | 6 | some tests and refactoring, styling
 31.8 | 7 | optimizing frontend for mobile, tests

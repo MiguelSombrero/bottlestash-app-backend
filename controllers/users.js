@@ -99,7 +99,6 @@ usersRouter.delete('/:id', middleware.validateToken, async (req, res, next) => {
     await Rating.deleteMany({ user: user._id })
     await Picture.deleteMany({ user: user._id })
 
-    // tämä ei toimi
     await Beer.updateMany(
       { ratings: { $in: [ user._id ] } },
       { $pull: { ratings: { user: user._id } } },
