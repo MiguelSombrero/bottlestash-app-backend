@@ -1,6 +1,7 @@
 Day | Hours | Legend
 ----|-------|-------
-All | 182 |
+All | 183 |
+10.9 | 1 | last betterments before final release
 04.9 | 3 | minor fixes and betterments
 03.9 | 6 | tests and documentation, catch all router, styling
 02.9 | 3 | frontend testing
