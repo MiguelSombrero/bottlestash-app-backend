@@ -26,7 +26,7 @@ The latest version of this application is running on Heroku:
 
 ## Implementation
 
-Server side (backend) is implemented with [Node.js](https://nodejs.org/en/) and [Express](https://expressjs.com/). Data is persisted with axios and MongoDb.
+Server side (backend) is implemented with [Node.js](https://nodejs.org/en/) and [Express](https://expressjs.com/). Data is persisted with mongoose and MongoDb.
 
 ## Tests
 
